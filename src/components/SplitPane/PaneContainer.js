@@ -9,13 +9,6 @@ const PaneContainerBox = styled.div`
   width: 100%;
   height: 100%;
 
-  .pane-content {
-    width: 100%;
-    height: 100%;
-    background-color: #151515;
-    color: white;
-  }
-
   .splitter {
     border: 2px solid #343434 !important;
   }
