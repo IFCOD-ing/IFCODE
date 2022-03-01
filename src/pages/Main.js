@@ -7,14 +7,22 @@ import MainPane from "../components/MainPane";
 import PaneContainer from "../components/SplitPane/PaneContainer";
 import ContentContainer from "../components/ContentContainer";
 
-import TabList from "../components/tab/TabList";
-import Tab from "../components/tab/Tab";
-import TabPanel from "../components/tab/TabPanel";
+import TabList from "../components/Tabs/TabList";
+import Tab from "../components/Tabs/Tab";
+import TabPanel from "../components/Tabs/TabPanel";
+
+import FileTree from "../components/FileTree";
 
 const MainWrapper = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
+
+  .box {
+    width: 100%;
+    height: 400px;
+    border-bottom: 1px solid #343434;
+  }
 `;
 
 function Main() {
@@ -26,7 +34,11 @@ function Main() {
 
   return (
     <MainWrapper>
-      <MainNav />
+      <MainNav>
+        <div className="box">
+          <FileTree />
+        </div>
+      </MainNav>
       <MainPane>
         <PaneContainer viewType="vertical">
           <ContentContainer>

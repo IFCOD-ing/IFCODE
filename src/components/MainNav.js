@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import Tree from "./Tree/Tree";
+import PropTypes from "prop-types";
 
 const NavWrapper = styled.div`
   min-width: 400px;
@@ -11,32 +11,12 @@ const NavWrapper = styled.div`
   color: white;
 `;
 
-const structure = [
-  {
-    type: "folder",
-    name: "src",
-    childrens: [
-      {
-        type: "folder",
-        name: "Components",
-        childrens: [
-          { type: "file", name: "Modal.js" },
-          { type: "file", name: "Modal.css" },
-        ],
-      },
-      { type: "file", name: "index.js" },
-      { type: "file", name: "index.html" },
-    ],
-  },
-  { type: "file", name: "package.json" },
-];
-
-function Nav() {
-  return (
-    <NavWrapper>
-      <Tree data={structure} />
-    </NavWrapper>
-  );
+function MainNav({ children }) {
+  return <NavWrapper>{children}</NavWrapper>;
 }
 
-export default Nav;
+MainNav.propTypes = {
+  children: PropTypes.node,
+};
+
+export default MainNav;

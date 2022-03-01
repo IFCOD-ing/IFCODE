@@ -58,7 +58,6 @@ function File({ name }) {
     <FileWrapper>
       {FILE_ICONS[ext] || <AiOutlineFile />}
       <span>{name}</span>
-
       <div className="actions">
         <AiOutlineEdit />
         <AiOutlineDelete />

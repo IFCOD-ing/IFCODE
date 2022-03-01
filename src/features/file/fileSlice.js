@@ -1,7 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import file from "../../file.json";
+
+import { createStructureId } from "../../helper/createStructureId";
 
 const initialState = {
-  structure: {},
+  structure: createStructureId(file),
 };
 
 export const fileSlice = createSlice({
