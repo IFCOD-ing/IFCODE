@@ -15,11 +15,11 @@ function Tree({ data }) {
     <TreeWrapper>
       {data.map((item) => {
         if (item.type === "file") {
-          return <File name={item.name} />;
+          return <File key={item.id} id={item.id} name={item.name} />;
         }
         if (item.type === "folder") {
           return (
-            <Folder name={item.name}>
+            <Folder key={item.id} id={item.id} name={item.name}>
               <Tree data={item.childrens} />
             </Folder>
           );

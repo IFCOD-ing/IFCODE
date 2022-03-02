@@ -4,7 +4,6 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 import { AiOutlineFile, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
-
 import { DiJavascript1, DiCss3Full, DiHtml5, DiReact } from "react-icons/di";
 
 const FILE_ICONS = {
@@ -52,7 +51,7 @@ const FileWrapper = styled.div`
 `;
 
 function File({ name }) {
-  let ext = name.split(".")[1];
+  const ext = name.split(".")[1];
 
   return (
     <FileWrapper>

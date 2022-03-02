@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+
+import { registeredUpdateFile } from "../../features/file/fileSlice";
 
 import PropTypes from "prop-types";
 
@@ -56,16 +59,17 @@ const Collapsible = styled.div`
   overflow: hidden;
 `;
 
-function Folder({ name, children }) {
+function Folder({ name, children, id }) {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const handleToggle = () => {
     // e.preventDefault();
     setIsOpen(!isOpen);
   };
 
-  function handleEditClick() {
-    console.log(name);
+  function handleFileAddButtonClick() {
+    dispatch(registeredUpdateFile({ id }));
   }
 
   return (
@@ -76,8 +80,8 @@ function Folder({ name, children }) {
           <span>{name}</span>
         </div>
         <div className="actions">
-          <AiOutlineEdit onClick={handleEditClick} />
-          <AiOutlineFileAdd />
+          <AiOutlineEdit />
+          <AiOutlineFileAdd onClick={handleFileAddButtonClick} />
           <AiOutlineFolderAdd />
           <AiOutlineDelete />
         </div>
@@ -88,6 +92,7 @@ function Folder({ name, children }) {
 }
 
 Folder.propTypes = {
+  id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   children: PropTypes.node,
 };
