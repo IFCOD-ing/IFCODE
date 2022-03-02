@@ -22,6 +22,14 @@ const MainWrapper = styled.div`
     width: 100%;
     height: 400px;
     border-bottom: 1px solid #343434;
+
+    .title-box {
+      border-bottom: 1px solid #343434;
+      height: 40px;
+      line-height: 40px;
+      margin-left: 20px;
+      font-size: 20px;
+    }
   }
 `;
 
@@ -36,6 +44,7 @@ function Main() {
     <MainWrapper>
       <MainNav>
         <div className="box">
+          <div className="title-box">File</div>
           <FileTree />
         </div>
       </MainNav>
