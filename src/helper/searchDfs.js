@@ -20,4 +20,23 @@ function createStructureId(fileStructure) {
   return cloneFileStructure;
 }
 
-export { createStructureId };
+function addFileById(file, id, name) {
+  function travelsalTree(data) {
+    if (!data) {
+      return;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].id === id) {
+        data[i].childrens.push({ type: "file", name, id: nanoid() });
+        return;
+      }
+
+      travelsalTree(data[i].childrens);
+    }
+  }
+
+  travelsalTree(file, id);
+}
+
+export { createStructureId, addFileById };
