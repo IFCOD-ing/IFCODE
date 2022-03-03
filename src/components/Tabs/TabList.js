@@ -8,6 +8,7 @@ const TabListWrapper = styled.div`
   height: 40px;
   border-bottom: 1px solid #343434;
   overflow-x: auto;
+  background-color: #151515;
 
   &::-webkit-scrollbar {
     height: 1px;
