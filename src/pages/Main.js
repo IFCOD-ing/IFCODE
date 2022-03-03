@@ -13,10 +13,16 @@ import TabPanel from "../components/Tabs/TabPanel";
 
 import FileTree from "../components/FileTree";
 
+import CodeEditor from "../components/CodeEditor";
+
 const MainWrapper = styled.div`
   display: flex;
-  width: 100%;
+  flex: 1 1 0;
   height: 100%;
+
+  iframe {
+    background-color: white;
+  }
 
   .box {
     width: 100%;
@@ -30,6 +36,18 @@ const MainWrapper = styled.div`
       margin-left: 20px;
       font-size: 20px;
     }
+  }
+
+  .console {
+    background-color: black;
+    position: fixed;
+    width: 100%;
+  }
+
+  .view {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
   }
 `;
 
@@ -49,41 +67,46 @@ function Main() {
         </div>
       </MainNav>
       <MainPane>
+        <TabList>
+          <Tab
+            title="index.js"
+            index={0}
+            onClick={handleTabClick}
+            toggleState={toggleState}
+          />
+          <Tab
+            title="index.html"
+            index={1}
+            onClick={handleTabClick}
+            toggleState={toggleState}
+          />
+          <Tab
+            title="index.css"
+            index={2}
+            onClick={handleTabClick}
+            toggleState={toggleState}
+          />
+        </TabList>
         <PaneContainer viewType="vertical">
           <ContentContainer>
-            <TabList>
-              <Tab
-                title="index.js"
-                index={0}
-                onClick={handleTabClick}
-                toggleState={toggleState}
-              />
-              <Tab
-                title="index.html"
-                index={1}
-                onClick={handleTabClick}
-                toggleState={toggleState}
-              />
-              <Tab
-                title="index.css"
-                index={2}
-                onClick={handleTabClick}
-                toggleState={toggleState}
-              />
-            </TabList>
             <TabPanel index={0} toggleState={toggleState}>
-              index.js
+              <CodeEditor language="javascript" value="" />
             </TabPanel>
             <TabPanel index={1} toggleState={toggleState}>
-              index.html
+              <CodeEditor language="html" value="" />
             </TabPanel>
             <TabPanel index={2} toggleState={toggleState}>
-              index.css
+              <CodeEditor language="css" value="" />
             </TabPanel>
           </ContentContainer>
           <PaneContainer viewType="horizontal">
-            <ContentContainer>view</ContentContainer>
-            <ContentContainer>console</ContentContainer>
+            <ContentContainer>
+              <iframe srcDoc="<h1>항이</h1>"></iframe>
+            </ContentContainer>
+            <ContentContainer>
+              <div className="console">console</div>
+              <div className="content"></div>
+            </ContentContainer>
           </PaneContainer>
         </PaneContainer>
       </MainPane>
