@@ -7,12 +7,16 @@ const GlobalStyles = createGlobalStyle`
   html,
   body,
   #root {
-    width: 100%;
-    height: 100%;
     font-family: Inter, sans-serif;
   }
 
-  div {
+  #root {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+  }
+
+  * {
     box-sizing: border-box;
   }
 `;

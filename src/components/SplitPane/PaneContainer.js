@@ -12,6 +12,19 @@ const PaneContainerBox = styled.div`
   .splitter {
     border: 2px solid #343434 !important;
   }
+
+  .reflex-element::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  .reflex-element::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #343434;
+  }
+  .reflex-element::-webkit-scrollbar-track {
+    background: #151515;
+  }
 `;
 
 function PaneContainer({ children, viewType }) {
