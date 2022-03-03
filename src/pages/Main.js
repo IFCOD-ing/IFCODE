@@ -1,102 +1,78 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import MainNav from "../components/MainNav";
-import MainPane from "../components/MainPane";
+import { openFile, updateSelectedFile } from "../features/file/fileSlice";
 
-import PaneContainer from "../components/SplitPane/PaneContainer";
-import ContentContainer from "../components/ContentContainer";
+import MainNav from "../components/Main/MainNav";
+import MainPane from "../components/Main/MainPane";
 
-import TabList from "../components/Tabs/TabList";
-import Tab from "../components/Tabs/Tab";
-import TabPanel from "../components/Tabs/TabPanel";
+import PaneContainer from "../components/Main/SplitPane/PaneContainer";
+import ContentContainer from "../components/Main/ContentContainer";
 
-import FileTree from "../components/FileTree";
+import TabList from "../components/Main/Tabs/TabList";
+import Tab from "../components/Main/Tabs/Tab";
+import TabPanel from "../components/Main/Tabs/TabPanel";
 
-import CodeEditor from "../components/CodeEditor";
-
-const MainWrapper = styled.div`
-  display: flex;
-  flex: 1 1 0;
-  height: 100%;
-
-  iframe {
-    background-color: white;
-  }
-
-  .box {
-    width: 100%;
-    height: 400px;
-    border-bottom: 1px solid #343434;
-
-    .title-box {
-      border-bottom: 1px solid #343434;
-      height: 40px;
-      line-height: 40px;
-      margin-left: 20px;
-      font-size: 20px;
-    }
-  }
-
-  .console {
-    background-color: black;
-    position: fixed;
-    width: 100%;
-  }
-
-  .view {
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
-  }
-`;
+import FileTree from "../components/Main/FileTree";
+import CodeEditor from "../components/Main/CodeEditor";
 
 function Main() {
-  const [toggleState, setToggleState] = useState(0);
+  const openedFile = useSelector((state) => state.file.openedFile);
+  const selectedFile = useSelector((state) => state.file.selectedFile);
 
-  function handleTabClick(index) {
-    setToggleState(index);
+  const dispatch = useDispatch();
+
+  function handleFileClick(id) {
+    dispatch(openFile({ id }));
+  }
+
+  function handleTabClick(id) {
+    dispatch(updateSelectedFile({ id }));
+  }
+
+  const openedFileList = Object.entries(openedFile);
+
+  let selectedFileType;
+
+  if (selectedFile.name) {
+    selectedFileType = selectedFile.name.split(".")[1];
   }
 
   return (
     <MainWrapper>
       <MainNav>
         <div className="box">
-          <div className="title-box">File</div>
-          <FileTree />
+          <div className="title-box">
+            <span>File</span>
+            <button className="run-button">run</button>
+          </div>
+          <FileTree onFileClick={handleFileClick} />
         </div>
       </MainNav>
       <MainPane>
         <TabList>
-          <Tab
-            title="index.js"
-            index={0}
-            onClick={handleTabClick}
-            toggleState={toggleState}
-          />
-          <Tab
-            title="index.html"
-            index={1}
-            onClick={handleTabClick}
-            toggleState={toggleState}
-          />
-          <Tab
-            title="index.css"
-            index={2}
-            onClick={handleTabClick}
-            toggleState={toggleState}
-          />
+          {openedFileList.map(([key, value]) => {
+            return (
+              <Tab
+                key={key}
+                id={key}
+                tabState={selectedFile.id}
+                title={value.name}
+                onClick={() => handleTabClick(key)}
+              />
+            );
+          })}
         </TabList>
         <PaneContainer viewType="vertical">
           <ContentContainer>
-            <TabPanel index={0} toggleState={toggleState}>
-              <CodeEditor language="javascript" value="" />
-            </TabPanel>
-            <TabPanel index={1} toggleState={toggleState}>
-              <CodeEditor language="html" value="" />
-            </TabPanel>
-            <TabPanel index={2} toggleState={toggleState}>
-              <CodeEditor language="css" value="" />
+            <TabPanel>
+              {selectedFile.name && (
+                <CodeEditor
+                  language={selectedFileType}
+                  value={selectedFile.content}
+                />
+              )}
             </TabPanel>
           </ContentContainer>
           <PaneContainer viewType="horizontal">
@@ -113,5 +89,50 @@ function Main() {
     </MainWrapper>
   );
 }
+
+const MainWrapper = styled.div`
+  display: flex;
+  flex: 1 1 0;
+  height: 100%;
+
+  iframe {
+    background-color: white;
+  }
+
+  .box {
+    width: 100%;
+    height: 400px;
+    border-bottom: 1px solid #343434;
+
+    .title-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #343434;
+      height: 40px;
+      line-height: 40px;
+      margin-left: 20px;
+      font-size: 20px;
+      margin-right: 20px;
+
+      .run-button {
+        height: 20px;
+        width: 40px;
+      }
+    }
+  }
+
+  .console {
+    background-color: black;
+    position: fixed;
+    width: 100%;
+  }
+
+  .view {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+  }
+`;
 
 export default Main;

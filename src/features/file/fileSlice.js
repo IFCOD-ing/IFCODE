@@ -1,11 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import file from "../../file.json";
 
-import { createStructureId, addFileById } from "../../helper/searchDfs";
+import {
+  createStructureId,
+  addFileById,
+  findFileById,
+} from "../../helper/searchDfs";
 
 const initialState = {
   structure: createStructureId(file),
   updateFile: "",
+  openedFile: {},
+  selectedFile: {},
 };
 
 export const fileSlice = createSlice({
@@ -21,13 +27,32 @@ export const fileSlice = createSlice({
     },
     addFile: (state, action) => {
       const { name } = action.payload;
+
       addFileById(state.structure, state.updateFile, name);
       state.updateFile = "";
+    },
+    openFile: (state, action) => {
+      const { id } = action.payload;
+      const file = findFileById(state.structure, id);
+
+      state.openedFile[id] = file;
+      state.selectedFile = file;
+    },
+    updateSelectedFile: (state, action) => {
+      const { id } = action.payload;
+      const file = findFileById(state.structure, id);
+
+      state.selectedFile = file;
     },
   },
 });
 
-export const { registeredUpdateFile, cancelUpdateFile, addFile } =
-  fileSlice.actions;
+export const {
+  registeredUpdateFile,
+  cancelUpdateFile,
+  addFile,
+  openFile,
+  updateSelectedFile,
+} = fileSlice.actions;
 
 export default fileSlice.reducer;

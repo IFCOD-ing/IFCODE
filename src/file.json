@@ -3,17 +3,9 @@
     "type": "folder",
     "name": "src",
     "childrens": [
-      {
-        "type": "folder",
-        "name": "Components",
-        "childrens": [
-          { "type": "file", "name": "Modal.js" },
-          { "type": "file", "name": "Modal.css" }
-        ]
-      },
-      { "type": "file", "name": "index.js" },
-      { "type": "file", "name": "index.html" }
+      { "type": "file", "name": "index.js", "content": "index.js" },
+      { "type": "file", "name": "styles.css", "content": "styles.css" }
     ]
   },
-  { "type": "file", "name": "package.json" }
+  { "type": "file", "name": "index.html", "content": "index.html" }
 ]
