@@ -13,13 +13,31 @@ const FILE_ICONS = {
   jsx: <DiReact />,
 };
 
+function File({ name, id, onClick }) {
+  const ext = name.split(".")[1];
+
+  return (
+    <FileWrapper>
+      {FILE_ICONS[ext] || <AiOutlineFile />}
+      <span className="file" onClick={() => onClick(id)}>
+        {name}
+      </span>
+      <div className="actions">
+        <AiOutlineEdit />
+        <AiOutlineDelete />
+      </div>
+    </FileWrapper>
+  );
+}
+
 const FileWrapper = styled.div`
   padding-left: 20px;
   display: flex;
   align-items: center;
 
-  span {
+  .file {
     margin-left: 5px;
+    cursor: pointer;
   }
 
   .actions {
@@ -50,23 +68,10 @@ const FileWrapper = styled.div`
   }
 `;
 
-function File({ name }) {
-  const ext = name.split(".")[1];
-
-  return (
-    <FileWrapper>
-      {FILE_ICONS[ext] || <AiOutlineFile />}
-      <span>{name}</span>
-      <div className="actions">
-        <AiOutlineEdit />
-        <AiOutlineDelete />
-      </div>
-    </FileWrapper>
-  );
-}
-
 File.propTypes = {
-  name: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default File;

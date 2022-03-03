@@ -10,17 +10,24 @@ const TreeWrapper = styled.div`
   line-height: 1.5; ;
 `;
 
-function Tree({ data }) {
+function Tree({ data, onNodeClick }) {
   return (
     <TreeWrapper>
       {data.map((item) => {
         if (item.type === "file") {
-          return <File key={item.id} id={item.id} name={item.name} />;
+          return (
+            <File
+              key={item.id}
+              id={item.id}
+              name={item.name}
+              onClick={() => onNodeClick(item.id)}
+            />
+          );
         }
         if (item.type === "folder") {
           return (
             <Folder key={item.id} id={item.id} name={item.name}>
-              <Tree data={item.childrens} />
+              <Tree data={item.childrens} onNodeClick={onNodeClick} />
             </Folder>
           );
         }
@@ -31,6 +38,7 @@ function Tree({ data }) {
 
 Tree.propTypes = {
   data: PropTypes.array.isRequired,
+  onNodeClick: PropTypes.func,
 };
 
 export default Tree;

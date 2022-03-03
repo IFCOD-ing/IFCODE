@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { cancelUpdateFile, addFile } from "../features/file/fileSlice";
+import { cancelUpdateFile, addFile } from "../../features/file/fileSlice";
 
 const FileFormWrapper = styled.div`
   display: ${(props) => (props.view ? undefined : "none")};

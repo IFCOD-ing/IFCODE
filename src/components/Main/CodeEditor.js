@@ -25,7 +25,7 @@ const Wrapper = styled.div`
 
 function CodeEditor({ language, value }) {
   const extenstionInfo = {
-    javascript,
+    js: javascript,
     html,
     css,
   };
