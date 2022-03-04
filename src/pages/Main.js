@@ -1,8 +1,14 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { openFile, updateSelectedFile } from "../features/file/fileSlice";
+import file from "../file.json";
+import {
+  findFileById,
+  findRenderFile,
+  createStructureId,
+  addNewFileById,
+  updateFileContent,
+} from "../helper/searchDfs";
 
 import MainNav from "../components/Main/MainNav";
 import MainPane from "../components/Main/MainPane";
@@ -14,30 +20,118 @@ import TabList from "../components/Main/Tabs/TabList";
 import Tab from "../components/Main/Tabs/Tab";
 import TabPanel from "../components/Main/Tabs/TabPanel";
 
-import FileTree from "../components/Main/FileTree";
 import CodeEditor from "../components/Main/CodeEditor";
+import WebView from "../components/Main/WebView";
+import Tree from "../components/Main/Tree/Tree";
+import FileForm from "../components/Main/FileForm";
 
 function Main() {
-  const openedFile = useSelector((state) => state.file.openedFile);
-  const selectedFile = useSelector((state) => state.file.selectedFile);
+  // 파일 구조 레더링
+  const [fileTree, setFileTree] = useState([]);
 
-  const dispatch = useDispatch();
+  // 탭에 파일 추가
+  const [fileTabInfo, setFileTabInfo] = useState({});
+  const [selectedFile, setSelectedFile] = useState({});
 
+  // fireform
+  const [isFileFormShow, setIsFileFormShow] = useState(false);
+  const [updateFolderId, setUpdateFolderId] = useState("");
+
+  // inputCode
+  const [inputCode, setInputCode] = useState(null);
+
+  // json 파일 트리 구조로 변환
+  useEffect(() => {
+    const fileInfo = createStructureId(file);
+    setFileTree(fileInfo);
+  }, []);
+
+  // 사용자가 코드 입력시 해당 코드 상태 저장
+  useEffect(() => {
+    if (inputCode === null) {
+      return;
+    }
+
+    const newFileTree = updateFileContent(fileTree, selectedFile.id, inputCode);
+    setFileTree(newFileTree);
+  }, [inputCode]);
+
+  // 실행
+  const [runCount, setRunCount] = useState(0);
+  const [srcDoc, setSrcDoc] = useState(``);
+
+  function handleRunButtonClick() {
+    setRunCount(runCount + 1);
+  }
+
+  useEffect(() => {
+    if (!runCount) {
+      return;
+    }
+
+    const html = findRenderFile(fileTree, "index.html");
+    const css = findRenderFile(fileTree, "styles.css");
+    const script = findRenderFile(fileTree, "index.js");
+
+    const doc = `
+      <html>
+        <style>${css}</style>
+        <body>
+          ${html}
+        <body>
+        <script>
+          ${script}
+        </script>
+      <html>
+    `;
+
+    setSrcDoc(doc);
+  }, [runCount]);
+
+  // 파일 클릭시 탭에 추가
   function handleFileClick(id) {
-    dispatch(openFile({ id }));
+    const clickedFileInfo = findFileById(fileTree, id);
+    setFileTabInfo({ ...fileTabInfo, [id]: clickedFileInfo });
+    setSelectedFile(clickedFileInfo);
   }
 
-  function handleTabClick(id) {
-    dispatch(updateSelectedFile({ id }));
+  // 폴더에서 파일 추가 버튼 클릭시 file form show
+  function handleFileAddButtonClick(folderId) {
+    setIsFileFormShow(true);
+    setUpdateFolderId(folderId);
   }
 
-  const openedFileList = Object.entries(openedFile);
-
-  let selectedFileType;
-
-  if (selectedFile.name) {
-    selectedFileType = selectedFile.name.split(".")[1];
+  // file from 취소 버튼 클릭
+  function handleCancelFileButtonClick() {
+    setIsFileFormShow(false);
   }
+
+  // file sumbit 파일 생성 버튼 클릭
+  function addNewFile(event) {
+    event.preventDefault();
+    const fileName = event.target.fileName.value;
+    const newFileTree = addNewFileById(fileTree, updateFolderId, fileName);
+
+    setFileTree(newFileTree);
+    setIsFileFormShow(false);
+    setUpdateFolderId("");
+
+    event.target.fileName.value = "";
+  }
+
+  // 탭 클릭 파일 내용 변환
+  function handleTabClick(fileId) {
+    const selectedFile = findFileById(fileTree, fileId);
+    setSelectedFile(selectedFile);
+  }
+
+  // 파일내 content 변경 반영
+  function handleChangeCode(value, id) {
+    setInputCode(value);
+  }
+
+  // 객체 트리구조 배열로 변환
+  const fileTabInfoList = Object.entries(fileTabInfo);
 
   return (
     <MainWrapper>
@@ -45,14 +139,25 @@ function Main() {
         <div className="box">
           <div className="title-box">
             <span>File</span>
-            <button className="run-button">run</button>
+            <button className="run-button" onClick={handleRunButtonClick}>
+              run
+            </button>
           </div>
-          <FileTree onFileClick={handleFileClick} />
+          <Tree
+            data={fileTree}
+            onNodeClick={handleFileClick}
+            onAddFile={handleFileAddButtonClick}
+          />
+          <FileForm
+            isShow={isFileFormShow}
+            onSubmitFile={addNewFile}
+            onCancel={handleCancelFileButtonClick}
+          />
         </div>
       </MainNav>
       <MainPane>
         <TabList>
-          {openedFileList.map(([key, value]) => {
+          {fileTabInfoList.map(([key, value]) => {
             return (
               <Tab
                 key={key}
@@ -69,15 +174,15 @@ function Main() {
             <TabPanel>
               {selectedFile.name && (
                 <CodeEditor
-                  language={selectedFileType}
-                  value={selectedFile.content}
+                  file={selectedFile}
+                  onContentChange={handleChangeCode}
                 />
               )}
             </TabPanel>
           </ContentContainer>
           <PaneContainer viewType="horizontal">
             <ContentContainer>
-              <iframe srcDoc="<h1>항이</h1>"></iframe>
+              <WebView document={srcDoc} />
             </ContentContainer>
             <ContentContainer>
               <div className="console">console</div>
