@@ -1,13 +1,10 @@
-import React, { useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React from "react";
 
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { cancelUpdateFile, addFile } from "../../features/file/fileSlice";
-
 const FileFormWrapper = styled.div`
-  display: ${(props) => (props.view ? undefined : "none")};
+  display: ${(props) => (props.isDisplay ? undefined : "none")};
   height: 100px;
   margin-top: 10px;
   border-top: 1px solid #343434;
@@ -40,36 +37,13 @@ const FileFormWrapper = styled.div`
   }
 `;
 
-function FileForm({ display }) {
-  const inputRef = useRef(null);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    inputRef.current.focus();
-  }, []);
-
-  function handleCancelButton() {
-    dispatch(cancelUpdateFile());
-  }
-
-  function handleFormSubmit(event) {
-    event.preventDefault();
-    const fileName = event.target.fileName.value;
-
-    dispatch(addFile({ name: fileName }));
-    event.target.fileName.value = "";
-  }
-
+function FileForm({ isShow, onSubmitFile, onCancel }) {
   return (
-    <FileFormWrapper view={display}>
-      <form className="input-form" onSubmit={handleFormSubmit}>
-        <input
-          name="fileName"
-          ref={inputRef}
-          placeholder="input file or folder name"
-        />
+    <FileFormWrapper isDisplay={isShow}>
+      <form className="input-form" onSubmit={onSubmitFile}>
+        <input name="fileName" placeholder="input file or folder name" />
         <div>
-          <button type="button" onClick={handleCancelButton}>
+          <button type="button" onClick={onCancel}>
             취소
           </button>
           <button type="submit">생성</button>
@@ -80,7 +54,9 @@ function FileForm({ display }) {
 }
 
 FileForm.propTypes = {
-  display: PropTypes.string.isRequired,
+  isShow: PropTypes.bool.isRequired,
+  onSubmitFile: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
 };
 
 export default FileForm;
