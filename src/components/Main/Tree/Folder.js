@@ -56,7 +56,12 @@ const Collapsible = styled.div`
   overflow: hidden;
 `;
 
-function Folder({ name, children, onClickFileAddButton }) {
+function Folder({
+  name,
+  children,
+  onClickFileAddButton,
+  onClickFolderAddButton,
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
@@ -73,7 +78,7 @@ function Folder({ name, children, onClickFileAddButton }) {
         <div className="actions">
           <AiOutlineEdit />
           <AiOutlineFileAdd onClick={onClickFileAddButton} />
-          <AiOutlineFolderAdd />
+          <AiOutlineFolderAdd onClick={onClickFolderAddButton} />
           <AiOutlineDelete />
         </div>
       </div>
@@ -87,6 +92,7 @@ Folder.propTypes = {
   name: PropTypes.string.isRequired,
   children: PropTypes.node,
   onClickFileAddButton: PropTypes.func.isRequired,
+  onClickFolderAddButton: PropTypes.func,
 };
 
 export default Folder;

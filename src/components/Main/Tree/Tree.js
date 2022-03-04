@@ -10,7 +10,10 @@ const TreeWrapper = styled.div`
   line-height: 1.5; ;
 `;
 
-function Tree({ data, onNodeClick, onAddFile }) {
+function Tree({ data, onNodeClick, onAddFile, onAddFolder }) {
+  console.log(data);
+  console.log(onAddFile);
+
   return (
     <TreeWrapper>
       {data.map((item) => {
@@ -30,8 +33,14 @@ function Tree({ data, onNodeClick, onAddFile }) {
               key={item.id}
               name={item.name}
               onClickFileAddButton={() => onAddFile(item.id)}
+              onClickFolderAddButton={() => onAddFolder(item.id)}
             >
-              <Tree data={item.childrens} onNodeClick={onNodeClick} />
+              <Tree
+                data={item.childrens}
+                onNodeClick={onNodeClick}
+                onAddFile={onAddFile}
+                onAddFolder={onAddFolder}
+              />
             </Folder>
           );
         }
@@ -44,6 +53,7 @@ Tree.propTypes = {
   data: PropTypes.array.isRequired,
   onNodeClick: PropTypes.func,
   onAddFile: PropTypes.func,
+  onAddFolder: PropTypes.func,
 };
 
 export default Tree;

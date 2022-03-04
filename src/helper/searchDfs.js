@@ -40,7 +40,7 @@ function addFileById(file, id, name) {
   travelsalTree(file, id);
 }
 
-function addNewFileById(fileTree, folderId, name) {
+function addNewFileById(fileTree, folderId, name, type) {
   const cloneFileTree = _.cloneDeep(fileTree);
 
   function travelsalTree(data) {
@@ -50,7 +50,14 @@ function addNewFileById(fileTree, folderId, name) {
 
     for (let i = 0; i < data.length; i++) {
       if (data[i].id === folderId) {
-        data[i].childrens.push({ type: "file", name, id: nanoid() });
+        if (type === "file") {
+          data[i].childrens.push({ type, name, id: nanoid() });
+        }
+
+        if (type === "folder") {
+          data[i].childrens.push({ type, name, id: nanoid(), childrens: [] });
+        }
+
         return;
       }
 

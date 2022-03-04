@@ -156,7 +156,12 @@ function Main() {
 
   // 폴더에서 파일 추가 버튼 클릭시 file form show
   function handleFileAddButtonClick(folderId) {
-    setIsFileFormShow(true);
+    setIsFileFormShow("file");
+    setUpdateFolderId(folderId);
+  }
+
+  function handleFolderAddButtonClick(folderId) {
+    setIsFileFormShow("folder");
     setUpdateFolderId(folderId);
   }
 
@@ -169,7 +174,13 @@ function Main() {
   function addNewFile(event) {
     event.preventDefault();
     const fileName = event.target.fileName.value;
-    const newFileTree = addNewFileById(fileTree, updateFolderId, fileName);
+
+    const newFileTree = addNewFileById(
+      fileTree,
+      updateFolderId,
+      fileName,
+      isFileFormShow
+    );
 
     setFileTree(newFileTree);
     setIsFileFormShow(false);
@@ -189,6 +200,7 @@ function Main() {
     setInputCode(value);
   }
 
+  // log 기록 초기화
   function handleClearButtonClick() {
     setLogList([]);
   }
@@ -210,6 +222,7 @@ function Main() {
             data={fileTree}
             onNodeClick={handleFileClick}
             onAddFile={handleFileAddButtonClick}
+            onAddFolder={handleFolderAddButtonClick}
           />
           <FileForm
             isShow={isFileFormShow}
