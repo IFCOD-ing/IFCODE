@@ -25,6 +25,9 @@ import WebView from "../components/Main/WebView";
 import Tree from "../components/Main/Tree/Tree";
 import FileForm from "../components/Main/FileForm";
 
+import Terminal from "../components/Main/Terminal/Terminal";
+import Log from "../components/Main/Terminal/Log";
+
 function Main() {
   // 파일 구조 레더링
   const [fileTree, setFileTree] = useState([]);
@@ -185,8 +188,9 @@ function Main() {
               <WebView document={srcDoc} />
             </ContentContainer>
             <ContentContainer>
-              <div className="console">console</div>
-              <div className="content"></div>
+              <Terminal title="console">
+                <Log content="공우정" />
+              </Terminal>
             </ContentContainer>
           </PaneContainer>
         </PaneContainer>
@@ -225,12 +229,6 @@ const MainWrapper = styled.div`
         width: 40px;
       }
     }
-  }
-
-  .console {
-    background-color: black;
-    position: fixed;
-    width: 100%;
   }
 
   .view {
