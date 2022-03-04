@@ -43,6 +43,13 @@ function Main() {
   // inputCode
   const [inputCode, setInputCode] = useState(null);
 
+  // 실행
+  const [runCount, setRunCount] = useState(0);
+  const [srcDoc, setSrcDoc] = useState(``);
+
+  // log
+  const [logList, setLogList] = useState([]);
+
   // json 파일 트리 구조로 변환
   useEffect(() => {
     const fileInfo = createStructureId(file);
@@ -59,14 +66,6 @@ function Main() {
     setFileTree(newFileTree);
   }, [inputCode]);
 
-  // 실행
-  const [runCount, setRunCount] = useState(0);
-  const [srcDoc, setSrcDoc] = useState(``);
-
-  function handleRunButtonClick() {
-    setRunCount(runCount + 1);
-  }
-
   useEffect(() => {
     if (!runCount) {
       return;
@@ -76,6 +75,43 @@ function Main() {
     const css = findRenderFile(fileTree, "styles.css");
     const script = findRenderFile(fileTree, "index.js");
 
+    const logScript = `
+      const logMessage = function (message) {
+        window.parent.postMessage({ source: "iframe", log: message }, '*');
+      }
+
+      function add(something) {
+        logMessage(something.toString());
+      };
+
+      const originalError = console.error;
+      const originalLog = console.log;
+      const originalWarning = console.warn;
+      const originalInfo = console.info;
+      const originalClear = console.clear;
+
+      console.error = function (error) {
+        add(error.toString() + error.stack);
+        originalError.apply(console, arguments);
+      };
+      console.log = function (...args) {
+        args.forEach(add);
+        originalLog.apply(console, args);
+      };
+      console.warn = function (...args) {
+        args.forEach(add);
+        originalWarning.apply(console, args);
+      };
+      console.info = function (...args) {
+        args.forEach(add);
+        originalInfo.apply(console, args);
+      };
+      console.clear = function (...args) {
+        element.innerHTML = '';
+        originalClear.apply(console, args);
+      };
+    `;
+
     const doc = `
       <html>
         <style>${css}</style>
@@ -83,6 +119,7 @@ function Main() {
           ${html}
         <body>
         <script>
+          ${logScript}
           ${script}
         </script>
       <html>
@@ -90,6 +127,25 @@ function Main() {
 
     setSrcDoc(doc);
   }, [runCount]);
+
+  useEffect(() => {
+    function displayLogMessage(response) {
+      if (response.data && response.data.source === "iframe") {
+        setLogList((prevState) => [...prevState, response.data.log]);
+      }
+    }
+
+    window.addEventListener("message", displayLogMessage);
+
+    return () => {
+      window.removeEventListener("message", displayLogMessage);
+    };
+  }, []);
+
+  // 실행 버튼 클릭
+  function handleRunButtonClick() {
+    setRunCount(runCount + 1);
+  }
 
   // 파일 클릭시 탭에 추가
   function handleFileClick(id) {
@@ -131,6 +187,10 @@ function Main() {
   // 파일내 content 변경 반영
   function handleChangeCode(value, id) {
     setInputCode(value);
+  }
+
+  function handleClearButtonClick() {
+    setLogList([]);
   }
 
   // 객체 트리구조 배열로 변환
@@ -188,8 +248,13 @@ function Main() {
               <WebView document={srcDoc} />
             </ContentContainer>
             <ContentContainer>
-              <Terminal title="console">
-                <Log content="공우정" />
+              <Terminal
+                title="console"
+                onExtraButtonClick={handleClearButtonClick}
+              >
+                {logList.map((value, index) => (
+                  <Log key={index.toString() + value} content={value} />
+                ))}
               </Terminal>
             </ContentContainer>
           </PaneContainer>

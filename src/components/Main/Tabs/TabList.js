@@ -16,8 +16,6 @@ const TabListWrapper = styled.div`
 `;
 
 function TabList({ children }) {
-  console.log(children);
-
   return <TabListWrapper>{children}</TabListWrapper>;
 }
 
