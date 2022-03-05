@@ -7,5 +7,5 @@
       { "type": "file", "name": "styles.css", "content": "styles.css" }
     ]
   },
-  { "type": "file", "name": "index.html", "content": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset='utf-8'>\n  <meta name='viewport' content='width=device-width'>\n  <title>IF(CODE)</title>\n</head>\n<body>\n\n</body>\n</html>" }
+  { "type": "file", "name": "index.html", "content": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset='utf-8'>\n  <meta name='viewport' content='width=device-width'>\n  <title>IF(CODE)</title>\n  <link rel='stylesheet' href='src/styles.css'>\n</head>\n<body>\n\n  <script src='src/index.js'></script>\n</body>\n</html>" }
 ]
