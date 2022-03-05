@@ -11,9 +11,6 @@ const TreeWrapper = styled.div`
 `;
 
 function Tree({ data, onNodeClick, onAddFile, onAddFolder }) {
-  console.log(data);
-  console.log(onAddFile);
-
   return (
     <TreeWrapper>
       {data.map((item) => {
