@@ -10,6 +10,8 @@ import {
   updateFileContent,
 } from "../helper/searchDfs";
 
+import { setViewRender } from "../helper/setViewRender";
+
 import MainNav from "../components/Main/MainNav";
 import MainPane from "../components/Main/MainPane";
 
@@ -71,59 +73,11 @@ function Main() {
       return;
     }
 
+    // html 파일 가져오기
     const html = findRenderFile(fileTree, "index.html");
-    const css = findRenderFile(fileTree, "styles.css");
-    const script = findRenderFile(fileTree, "index.js");
 
-    const logScript = `
-      const logMessage = function (message) {
-        window.parent.postMessage({ source: "iframe", log: message }, '*');
-      }
-
-      function add(something) {
-        logMessage(something.toString());
-      };
-
-      const originalError = console.error;
-      const originalLog = console.log;
-      const originalWarning = console.warn;
-      const originalInfo = console.info;
-      const originalClear = console.clear;
-
-      console.error = function (error) {
-        add(error.toString() + error.stack);
-        originalError.apply(console, arguments);
-      };
-      console.log = function (...args) {
-        args.forEach(add);
-        originalLog.apply(console, args);
-      };
-      console.warn = function (...args) {
-        args.forEach(add);
-        originalWarning.apply(console, args);
-      };
-      console.info = function (...args) {
-        args.forEach(add);
-        originalInfo.apply(console, args);
-      };
-      console.clear = function (...args) {
-        element.innerHTML = '';
-        originalClear.apply(console, args);
-      };
-    `;
-
-    const doc = `
-      <html>
-        <style>${css}</style>
-        <body>
-          ${html}
-        <body>
-        <script>
-          ${logScript}
-          ${script}
-        </script>
-      <html>
-    `;
+    // html 파일 파서 후에 각 script style 파일 입력
+    const doc = setViewRender(fileTree, html);
 
     setSrcDoc(doc);
   }, [runCount]);
@@ -160,6 +114,7 @@ function Main() {
     setUpdateFolderId(folderId);
   }
 
+  // 폴더 추가
   function handleFolderAddButtonClick(folderId) {
     setIsFileFormShow("folder");
     setUpdateFolderId(folderId);
