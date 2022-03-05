@@ -23,9 +23,12 @@ const Wrapper = styled.div`
   }
 `;
 
-function CodeEditor({ language, value }) {
+function CodeEditor({ file, onContentChange }) {
+  const { name, content, id } = file;
+  const fileType = name.split(".")[1];
+
   const extenstionInfo = {
-    javascript,
+    js: javascript,
     html,
     css,
   };
@@ -34,12 +37,11 @@ function CodeEditor({ language, value }) {
     <Wrapper>
       <CodeMirror
         className="code-editor"
-        value={value}
+        value={content}
+        width="100%"
         height="100%"
-        extensions={[extenstionInfo[language]()]}
-        onChange={(value, viewUpdate) => {
-          console.log("value:", value);
-        }}
+        extensions={[extenstionInfo[fileType]()]}
+        onChange={(value) => onContentChange(value, id)}
         theme="dark"
       />
     </Wrapper>
@@ -47,8 +49,8 @@ function CodeEditor({ language, value }) {
 }
 
 CodeEditor.propTypes = {
-  language: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  file: PropTypes.object.isRequired,
+  onContentChange: PropTypes.func,
 };
 
 export default CodeEditor;

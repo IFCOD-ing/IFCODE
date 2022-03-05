@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import PropTypes from "prop-types";
 
-import CloseButton from "../common/CloseButton";
+import CloseButton from "../../common/CloseButton";
 
 const TabWrapper = styled.div`
   display: flex;
@@ -25,11 +25,11 @@ const TabWrapper = styled.div`
   }
 `;
 
-function Tab({ title, index, onClick, toggleState }) {
-  const isSelected = index === toggleState;
+function Tab({ id, title, onClick, tabState }) {
+  const isSelected = id === tabState;
 
   return (
-    <TabWrapper isSelected={isSelected} onClick={() => onClick(index)}>
+    <TabWrapper isSelected={isSelected} onClick={onClick}>
       <span className="title">{title}</span>
       <CloseButton />
     </TabWrapper>
@@ -37,10 +37,10 @@ function Tab({ title, index, onClick, toggleState }) {
 }
 
 Tab.propTypes = {
+  id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
   onClick: PropTypes.func.isRequired,
-  toggleState: PropTypes.number.isRequired,
+  tabState: PropTypes.string.isRequired,
 };
 
 export default Tab;
