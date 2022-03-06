@@ -161,8 +161,13 @@ function Main() {
 
     if (selectedFile.id === fileId) {
       const fileTabList = Object.keys(fileTabInfo);
-      const lastTabInfoKey = fileTabList[fileTabList.length - 1];
 
+      if (!fileTabList.length) {
+        setSelectedFile({});
+        return;
+      }
+
+      const lastTabInfoKey = fileTabList[fileTabList.length - 1];
       const clickedFileInfo = findFileById(fileTree, lastTabInfoKey);
 
       setSelectedFile(clickedFileInfo);
