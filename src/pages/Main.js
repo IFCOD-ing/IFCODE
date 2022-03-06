@@ -60,12 +60,16 @@ function Main() {
 
   // 사용자가 코드 입력시 해당 코드 상태 저장
   useEffect(() => {
-    if (inputCode === null) {
+    if (inputCode === null || inputCode === "") {
       return;
     }
 
     const newFileTree = updateFileContent(fileTree, selectedFile.id, inputCode);
+    selectedFile.content = inputCode;
+
     setFileTree(newFileTree);
+    setSelectedFile({ ...selectedFile });
+    setInputCode("");
   }, [inputCode]);
 
   useEffect(() => {
@@ -104,6 +108,7 @@ function Main() {
   // 파일 클릭시 탭에 추가
   function handleFileClick(id) {
     const clickedFileInfo = findFileById(fileTree, id);
+
     setFileTabInfo({ ...fileTabInfo, [id]: clickedFileInfo });
     setSelectedFile(clickedFileInfo);
   }
@@ -148,6 +153,22 @@ function Main() {
   function handleTabClick(fileId) {
     const selectedFile = findFileById(fileTree, fileId);
     setSelectedFile(selectedFile);
+  }
+
+  // 탭 삭제
+  function handleCloseTab(fileId) {
+    delete fileTabInfo[fileId];
+
+    if (selectedFile.id === fileId) {
+      const fileTabList = Object.keys(fileTabInfo);
+      const lastTabInfoKey = fileTabList[fileTabList.length - 1];
+
+      const clickedFileInfo = findFileById(fileTree, lastTabInfoKey);
+
+      setSelectedFile(clickedFileInfo);
+    }
+
+    setFileTabInfo({ ...fileTabInfo });
   }
 
   // 파일내 content 변경 반영
@@ -196,6 +217,7 @@ function Main() {
                 tabState={selectedFile.id}
                 title={value.name}
                 onClick={() => handleTabClick(key)}
+                onClose={() => handleCloseTab(key)}
               />
             );
           })}

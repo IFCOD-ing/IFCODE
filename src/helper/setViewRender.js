@@ -30,6 +30,8 @@ function setViewRender(fileTree, html) {
     script = script.concat(currentScript);
   });
 
+  console.log(script);
+
   styleList.forEach((value) => {
     const currentStyle = "\n" + value;
     style = style.concat(currentStyle);
