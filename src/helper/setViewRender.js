@@ -1,14 +1,26 @@
 import { transform } from "@babel/standalone";
+// import test from "@babel/plugin-transform-modules-commonjs";
 
 import { findFileByPath } from "./searchBfs";
 import { findScriptTag } from "./findScriptTag";
 import { findStyleTag } from "./findStyleTag";
+
+const dependenciesInfo = {
+  react: "https://cdn.skypack.dev/react",
+  "react-dom": "https://cdn.skypack.dev/react-dom",
+  "canvas-confetti": "https://cdn.skypack.dev/canvas-confetti",
+};
 
 function setViewRender(fileTree, html, index) {
   const pathList = findScriptTag(html);
   const hrefList = findStyleTag(html);
   const scriptList = [];
   const styleList = [];
+
+  const OPTIONS = {
+    presets: ["react", ["es2015", { modules: false }]],
+    plugins: [customPlugin],
+  };
 
   pathList.forEach((value) => {
     const path = value.split("/");
@@ -40,12 +52,12 @@ function setViewRender(fileTree, html, index) {
   script = "\n" + index;
 
   try {
-    script = transform(script, {
-      presets: ["react", ["es2015", { modules: false }]],
-    }).code;
+    script = transform(script, OPTIONS).code;
   } catch (err) {
     console.log(err);
   }
+
+  console.log(script);
 
   const logScript = `
       const logMessage = function (message) {
@@ -94,12 +106,26 @@ function setViewRender(fileTree, html, index) {
         <body>
           ${html}
         <body>
-        <script>${logScript}</script>
-        <script>${script}</script>
+        <script></script>
+        <script type="module">${logScript} ${script}</script>
       <html>
     `;
 
   return doc;
+}
+
+function customPlugin({ types: t }) {
+  return {
+    visitor: {
+      ImportDeclaration(path) {
+        const dependency = path.node.source.value;
+
+        if (dependenciesInfo[dependency]) {
+          path.node.source.value = dependenciesInfo[dependency];
+        }
+      },
+    },
+  };
 }
 
 {

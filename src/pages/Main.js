@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import file from "../file.json";
+import react from "../react.json";
+
 import {
   findFileById,
   findRenderFile,
@@ -54,7 +56,7 @@ function Main() {
 
   // json 파일 트리 구조로 변환
   useEffect(() => {
-    const fileInfo = createStructureId(file);
+    const fileInfo = createStructureId(react);
     setFileTree(fileInfo);
   }, []);
 
@@ -79,9 +81,10 @@ function Main() {
 
     // html 파일 가져오기
     const html = findRenderFile(fileTree, "index.html");
+    const index = findRenderFile(fileTree, "index.js");
 
     // html 파일 파서 후에 각 script style 파일 입력
-    const doc = setViewRender(fileTree, html);
+    const doc = setViewRender(fileTree, html, index);
 
     setSrcDoc(doc);
   }, [runCount]);
@@ -240,7 +243,7 @@ function Main() {
           </ContentContainer>
           <PaneContainer viewType="horizontal">
             <ContentContainer>
-              <WebView document={srcDoc} />
+              <WebView document={srcDoc} run={runCount} />
             </ContentContainer>
             <ContentContainer>
               <Terminal
