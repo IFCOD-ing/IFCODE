@@ -1,8 +1,10 @@
+import { transform } from "@babel/standalone";
+
 import { findFileByPath } from "./searchBfs";
 import { findScriptTag } from "./findScriptTag";
 import { findStyleTag } from "./findStyleTag";
 
-function setViewRender(fileTree, html) {
+function setViewRender(fileTree, html, index) {
   const pathList = findScriptTag(html);
   const hrefList = findStyleTag(html);
   const scriptList = [];
@@ -30,12 +32,20 @@ function setViewRender(fileTree, html) {
     script = script.concat(currentScript);
   });
 
-  console.log(script);
-
   styleList.forEach((value) => {
     const currentStyle = "\n" + value;
     style = style.concat(currentStyle);
   });
+
+  script = "\n" + index;
+
+  try {
+    script = transform(script, {
+      presets: ["react", ["es2015", { modules: false }]],
+    }).code;
+  } catch (err) {
+    console.log(err);
+  }
 
   const logScript = `
       const logMessage = function (message) {
@@ -78,19 +88,24 @@ function setViewRender(fileTree, html) {
     <!DOCTYPE html>
       <html>
         <head>
-          <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-          <meta http-equiv="Pragma" content="no-cache">
-          <meta http-equiv="Expires" content="0">
+          
         </head>
         <style>${style}</style>
         <body>
           ${html}
         <body>
-        <script type="text/javascript">${logScript} ${script}</script>
+        <script>${logScript}</script>
+        <script>${script}</script>
       <html>
     `;
 
   return doc;
+}
+
+{
+  /* <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+          <meta http-equiv="Pragma" content="no-cache">
+          <meta http-equiv="Expires" content="0"></meta> */
 }
 
 export { setViewRender };
