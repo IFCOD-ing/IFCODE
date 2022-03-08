@@ -14,7 +14,11 @@ import {
 
 import { setViewRender } from "../helper/setViewRender";
 
+import javascriptSvg from "../assets/images/javascript.svg";
+import reactSvg from "../assets/images/react.svg";
+
 import MainNav from "../components/Main/MainNav";
+import Menu from "../components/Main/Menu";
 import MainPane from "../components/Main/MainPane";
 
 import PaneContainer from "../components/Main/SplitPane/PaneContainer";
@@ -33,6 +37,9 @@ import Terminal from "../components/Main/Terminal/Terminal";
 import Log from "../components/Main/Terminal/Log";
 
 function Main() {
+  // templete type
+  const [templete, setTemplete] = useState(file);
+
   // 파일 구조 레더링
   const [fileTree, setFileTree] = useState([]);
 
@@ -54,11 +61,14 @@ function Main() {
   // log
   const [logList, setLogList] = useState([]);
 
-  // json 파일 트리 구조로 변환
+  // 템플릿 파잁 트리 변경
   useEffect(() => {
-    const fileInfo = createStructureId(react);
+    const fileInfo = createStructureId(templete);
     setFileTree(fileInfo);
-  }, []);
+    setFileTabInfo({});
+    setSelectedFile({});
+    setSrcDoc(``);
+  }, [templete]);
 
   // 사용자가 코드 입력시 해당 코드 상태 저장
   useEffect(() => {
@@ -189,19 +199,34 @@ function Main() {
     setLogList([]);
   }
 
+  function handleJavscriptClick() {
+    setTemplete(file);
+  }
+
+  function handleReactClick() {
+    setTemplete(react);
+  }
+
   // 객체 트리구조 배열로 변환
   const fileTabInfoList = Object.entries(fileTabInfo);
 
   return (
     <MainWrapper>
       <MainNav>
-        <div className="box">
-          <div className="title-box">
-            <span>File</span>
+        <Menu title="Templete">
+          <div>
+            <img src={javascriptSvg} onClick={handleJavscriptClick}></img>
+            <img src={reactSvg} onClick={handleReactClick}></img>
+          </div>
+        </Menu>
+        <Menu
+          title="File"
+          titleSub={
             <button className="run-button" onClick={handleRunButtonClick}>
               run
             </button>
-          </div>
+          }
+        >
           <Tree
             data={fileTree}
             onNodeClick={handleFileClick}
@@ -213,7 +238,7 @@ function Main() {
             onSubmitFile={addNewFile}
             onCancel={handleCancelFileButtonClick}
           />
-        </div>
+        </Menu>
       </MainNav>
       <MainPane>
         <TabList>
