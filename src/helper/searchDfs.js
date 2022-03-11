@@ -41,6 +41,7 @@ function addFileById(file, id, name) {
 
 function addNewFileById(fileTree, folderId, name, type) {
   const cloneFileTree = _.cloneDeep(fileTree);
+  let error = "";
 
   function travelsalTree(data) {
     if (!data) {
@@ -54,6 +55,15 @@ function addNewFileById(fileTree, folderId, name, type) {
         }
 
         if (type === "folder") {
+          const folder = data[i].childrens.find(
+            ({ name: fileName }) => fileName === name
+          );
+
+          if (folder) {
+            error = "이미 존재하는 파일입니다.";
+            return;
+          }
+
           data[i].childrens.push({ type, name, id: nanoid(), childrens: [] });
         }
 
@@ -65,6 +75,10 @@ function addNewFileById(fileTree, folderId, name, type) {
   }
 
   travelsalTree(cloneFileTree, folderId);
+
+  if (error) {
+    return error;
+  }
 
   return cloneFileTree;
 }

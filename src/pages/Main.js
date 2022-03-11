@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-console.log(React.default);
-
 import file from "../file.json";
 import react from "../react.json";
 
@@ -15,6 +13,8 @@ import {
 } from "../helper/searchDfs";
 
 import { setViewRender } from "../helper/setViewRender";
+
+import { validationInputText } from "../helper/validate";
 
 import javascriptSvg from "../assets/images/javascript.svg";
 import reactSvg from "../assets/images/react.svg";
@@ -51,7 +51,7 @@ function Main() {
 
   // fireform
   const [isFileFormShow, setIsFileFormShow] = useState(false);
-  const [updateFolderId, setUpdateFolderId] = useState("");
+  const [updateFolderId, setUpdateFolderId] = useState({});
 
   // inputCode
   const [inputCode, setInputCode] = useState(null);
@@ -62,6 +62,9 @@ function Main() {
 
   // log
   const [logList, setLogList] = useState([]);
+
+  // fileForm 에러 메세지
+  const [errorMessage, setErrorMessage] = useState("");
 
   // 템플릿 파잁 트리 변경
   useEffect(() => {
@@ -131,13 +134,13 @@ function Main() {
   // 폴더에서 파일 추가 버튼 클릭시 file form show
   function handleFileAddButtonClick(folderId) {
     setIsFileFormShow("file");
-    setUpdateFolderId(folderId);
+    setUpdateFolderId({ type: "file", id: folderId });
   }
 
   // 폴더 추가
   function handleFolderAddButtonClick(folderId) {
     setIsFileFormShow("folder");
-    setUpdateFolderId(folderId);
+    setUpdateFolderId({ type: "folder", id: folderId });
   }
 
   // file from 취소 버튼 클릭
@@ -150,12 +153,26 @@ function Main() {
     event.preventDefault();
     const fileName = event.target.fileName.value;
 
+    const validationResult = validationInputText(fileName, updateFolderId.type);
+
+    if (validationResult) {
+      setErrorMessage(validationResult);
+      event.target.fileName.value = "";
+      return;
+    }
+
     const newFileTree = addNewFileById(
       fileTree,
-      updateFolderId,
+      updateFolderId.id,
       fileName,
       isFileFormShow
     );
+
+    if (typeof newFileTree === "string") {
+      setErrorMessage(newFileTree);
+      event.target.fileName.value = "";
+      return;
+    }
 
     setFileTree(newFileTree);
     setIsFileFormShow(false);
@@ -239,6 +256,7 @@ function Main() {
             isShow={isFileFormShow}
             onSubmitFile={addNewFile}
             onCancel={handleCancelFileButtonClick}
+            errorMessage={errorMessage}
           />
         </Menu>
       </MainNav>
