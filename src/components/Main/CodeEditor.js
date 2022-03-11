@@ -28,9 +28,9 @@ function CodeEditor({ file, onContentChange }) {
   const fileType = name.split(".")[1];
 
   const extenstionInfo = {
-    js: javascript,
-    html,
-    css,
+    js: javascript({ jsx: true }),
+    html: html(),
+    css: css(),
   };
 
   return (
@@ -40,7 +40,7 @@ function CodeEditor({ file, onContentChange }) {
         value={content}
         width="100%"
         height="100%"
-        extensions={[extenstionInfo[fileType]()]}
+        extensions={[extenstionInfo[fileType]]}
         onChange={(value) => onContentChange(value, id)}
         theme="dark"
       />

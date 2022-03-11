@@ -25,13 +25,15 @@ const TabWrapper = styled.div`
   }
 `;
 
-function Tab({ id, title, onClick, tabState }) {
+function Tab({ id, title, onClick, tabState, onClose }) {
   const isSelected = id === tabState;
 
   return (
-    <TabWrapper isSelected={isSelected} onClick={onClick}>
-      <span className="title">{title}</span>
-      <CloseButton />
+    <TabWrapper isSelected={isSelected}>
+      <span className="title" onClick={onClick}>
+        {title}
+      </span>
+      <CloseButton onClick={onClose} />
     </TabWrapper>
   );
 }
@@ -41,6 +43,7 @@ Tab.propTypes = {
   title: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   tabState: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default Tab;

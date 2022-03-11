@@ -10,7 +10,6 @@ function createStructureId(fileStructure) {
     }
 
     for (let i = 0; i < data.length; i++) {
-      console.log(data[i]);
       data[i].id = nanoid();
       travelsalTree(data[i].childrens);
     }

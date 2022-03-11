@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
+console.log(React.default);
+
 import file from "../file.json";
+import react from "../react.json";
+
 import {
   findFileById,
   findRenderFile,
@@ -12,7 +16,11 @@ import {
 
 import { setViewRender } from "../helper/setViewRender";
 
+import javascriptSvg from "../assets/images/javascript.svg";
+import reactSvg from "../assets/images/react.svg";
+
 import MainNav from "../components/Main/MainNav";
+import Menu from "../components/Main/Menu";
 import MainPane from "../components/Main/MainPane";
 
 import PaneContainer from "../components/Main/SplitPane/PaneContainer";
@@ -31,6 +39,9 @@ import Terminal from "../components/Main/Terminal/Terminal";
 import Log from "../components/Main/Terminal/Log";
 
 function Main() {
+  // templete type
+  const [templete, setTemplete] = useState(file);
+
   // 파일 구조 레더링
   const [fileTree, setFileTree] = useState([]);
 
@@ -52,20 +63,27 @@ function Main() {
   // log
   const [logList, setLogList] = useState([]);
 
-  // json 파일 트리 구조로 변환
+  // 템플릿 파잁 트리 변경
   useEffect(() => {
-    const fileInfo = createStructureId(file);
+    const fileInfo = createStructureId(templete);
     setFileTree(fileInfo);
-  }, []);
+    setFileTabInfo({});
+    setSelectedFile({});
+    setSrcDoc(``);
+  }, [templete]);
 
   // 사용자가 코드 입력시 해당 코드 상태 저장
   useEffect(() => {
-    if (inputCode === null) {
+    if (inputCode === null || inputCode === "") {
       return;
     }
 
     const newFileTree = updateFileContent(fileTree, selectedFile.id, inputCode);
+    selectedFile.content = inputCode;
+
     setFileTree(newFileTree);
+    setSelectedFile({ ...selectedFile });
+    setInputCode("");
   }, [inputCode]);
 
   useEffect(() => {
@@ -75,9 +93,10 @@ function Main() {
 
     // html 파일 가져오기
     const html = findRenderFile(fileTree, "index.html");
+    const index = findRenderFile(fileTree, "index.js");
 
     // html 파일 파서 후에 각 script style 파일 입력
-    const doc = setViewRender(fileTree, html);
+    const doc = setViewRender(fileTree, html, index);
 
     setSrcDoc(doc);
   }, [runCount]);
@@ -104,6 +123,7 @@ function Main() {
   // 파일 클릭시 탭에 추가
   function handleFileClick(id) {
     const clickedFileInfo = findFileById(fileTree, id);
+
     setFileTabInfo({ ...fileTabInfo, [id]: clickedFileInfo });
     setSelectedFile(clickedFileInfo);
   }
@@ -150,6 +170,27 @@ function Main() {
     setSelectedFile(selectedFile);
   }
 
+  // 탭 삭제
+  function handleCloseTab(fileId) {
+    delete fileTabInfo[fileId];
+
+    if (selectedFile.id === fileId) {
+      const fileTabList = Object.keys(fileTabInfo);
+
+      if (!fileTabList.length) {
+        setSelectedFile({});
+        return;
+      }
+
+      const lastTabInfoKey = fileTabList[fileTabList.length - 1];
+      const clickedFileInfo = findFileById(fileTree, lastTabInfoKey);
+
+      setSelectedFile(clickedFileInfo);
+    }
+
+    setFileTabInfo({ ...fileTabInfo });
+  }
+
   // 파일내 content 변경 반영
   function handleChangeCode(value, id) {
     setInputCode(value);
@@ -160,19 +201,34 @@ function Main() {
     setLogList([]);
   }
 
+  function handleJavscriptClick() {
+    setTemplete(file);
+  }
+
+  function handleReactClick() {
+    setTemplete(react);
+  }
+
   // 객체 트리구조 배열로 변환
   const fileTabInfoList = Object.entries(fileTabInfo);
 
   return (
     <MainWrapper>
       <MainNav>
-        <div className="box">
-          <div className="title-box">
-            <span>File</span>
+        <Menu title="Templete">
+          <div>
+            <img src={javascriptSvg} onClick={handleJavscriptClick}></img>
+            <img src={reactSvg} onClick={handleReactClick}></img>
+          </div>
+        </Menu>
+        <Menu
+          title="File"
+          titleSub={
             <button className="run-button" onClick={handleRunButtonClick}>
               run
             </button>
-          </div>
+          }
+        >
           <Tree
             data={fileTree}
             onNodeClick={handleFileClick}
@@ -184,7 +240,7 @@ function Main() {
             onSubmitFile={addNewFile}
             onCancel={handleCancelFileButtonClick}
           />
-        </div>
+        </Menu>
       </MainNav>
       <MainPane>
         <TabList>
@@ -196,6 +252,7 @@ function Main() {
                 tabState={selectedFile.id}
                 title={value.name}
                 onClick={() => handleTabClick(key)}
+                onClose={() => handleCloseTab(key)}
               />
             );
           })}
@@ -213,7 +270,7 @@ function Main() {
           </ContentContainer>
           <PaneContainer viewType="horizontal">
             <ContentContainer>
-              <WebView document={srcDoc} />
+              <WebView document={srcDoc} run={runCount} />
             </ContentContainer>
             <ContentContainer>
               <Terminal
