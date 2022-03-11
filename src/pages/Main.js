@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
+console.log(React.default);
+
 import file from "../file.json";
 import react from "../react.json";
 

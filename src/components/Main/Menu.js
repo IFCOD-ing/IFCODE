@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 const MenuWrapper = styled.div`
   width: 100%;
-  height: 400px;
+  min-height: 200px;
   border-bottom: 1px solid #343434;
 
   .title-box {
