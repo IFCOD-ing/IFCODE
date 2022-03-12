@@ -40,7 +40,7 @@ function CodeEditor({ file, onContentChange }) {
         value={content}
         width="100%"
         height="100%"
-        extensions={[extenstionInfo[fileType]]}
+        extensions={fileType && [extenstionInfo[fileType]]}
         onChange={(value) => onContentChange(value, id)}
         theme="dark"
       />
