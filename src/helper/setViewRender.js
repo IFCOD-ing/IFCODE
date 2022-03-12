@@ -1,12 +1,10 @@
 import { transform } from "@babel/standalone";
 
-import { findFileByPath } from "./searchBfs";
-import { findScriptTag } from "./findScriptTag";
-import { findStyleTag } from "./findStyleTag";
+import { findScriptTag, findLinkTag } from "./document/findTag";
+import { findFileByPath } from "./document/findFileByPath";
+import { removeScriptTag, removeLinkTag } from "./document/removeTag";
 
 import { createGraph } from "./bundler";
-
-// import styledComponents from 'https://cdn.skypack.dev/styled-components';
 
 const dependenciesInfo = {
   react: "https://cdn.skypack.dev/react",
@@ -15,29 +13,68 @@ const dependenciesInfo = {
   "styled-components": "https://cdn.skypack.dev/styled-components",
 };
 
-function setViewRender(fileTree, html, index) {
-  const pathList = findScriptTag(html);
-  const hrefList = findStyleTag(html);
-  const scriptList = [];
-  const styleList = [];
-
-  const OPTIONS = {
+const transpileOptionInfo = {
+  javascript: {
+    presets: [["es2015"]],
+  },
+  react: {
     presets: ["react", ["es2015"]],
-  };
+  },
+};
 
-  function transplie(fileContent) {
-    try {
-      const { code } = transform(fileContent, OPTIONS);
-
-      return code;
-    } catch (err) {
-      console.log(err);
-    }
+function transplie(fileContent, options) {
+  try {
+    return transform(fileContent, options).code;
+  } catch (err) {
+    return err;
   }
+}
+
+function setViewRender(fileTree, type) {
+  const { templete, htmlPath, entryPointPath } = type;
+
+  const htmlPathArray = htmlPath.split("/");
+  const htmlFile = findFileByPath(fileTree, htmlPathArray);
+
+  const scriptPathList = findScriptTag(htmlFile);
+  const styleLinkList = findLinkTag(htmlFile);
+
+  let htmlCode = "";
+  let scriptTagCode = "";
+  let styleTagCode = "";
+
+  htmlCode = removeScriptTag(htmlFile, scriptPathList);
+  htmlCode = removeLinkTag(htmlCode, styleLinkList);
+
+  scriptPathList.forEach((value) => {
+    const path = value.split("/");
+    const scriptCode = findFileByPath(fileTree, path);
+
+    const scriptTag = `
+      <script>
+        ${transplie(scriptCode, transpileOptionInfo[templete])}
+      </script>
+    `;
+
+    scriptTagCode = scriptTagCode.concat(scriptTag);
+  });
+
+  styleLinkList.forEach((value) => {
+    const path = value.split("/");
+    const styleCode = findFileByPath(fileTree, path);
+
+    const scriptTag = `
+      <style>
+        ${styleCode}
+      </style>
+    `;
+
+    styleTagCode = styleTagCode.concat(scriptTag);
+  });
 
   const { files, dependencies } = createGraph(
     fileTree,
-    "src/index.js",
+    entryPointPath,
     dependenciesInfo
   );
 
@@ -46,7 +83,7 @@ function setViewRender(fileTree, html, index) {
     {
       fileName: "${fileName}",
       func: function (require, exports) {
-        ${transplie(content)}
+        ${transplie(content, transpileOptionInfo[templete])}
       },
       exports: {}
     }
@@ -104,41 +141,6 @@ function setViewRender(fileTree, html, index) {
     modules[0]?.func(require, modules[0].exports);
   `;
 
-  pathList.forEach((value) => {
-    const path = value.split("/");
-
-    const script = findFileByPath(fileTree, path);
-    scriptList.push(script);
-  });
-
-  hrefList.forEach((value) => {
-    const path = value.split("/");
-
-    const style = findFileByPath(fileTree, path);
-    styleList.push(style);
-  });
-
-  let script = "";
-  let style = "";
-
-  scriptList.forEach((value) => {
-    const currentScript = "\n" + value;
-    script = script.concat(currentScript);
-  });
-
-  styleList.forEach((value) => {
-    const currentStyle = "\n" + value;
-    style = style.concat(currentStyle);
-  });
-
-  script = "\n" + index;
-
-  try {
-    script = transform(script, OPTIONS).code;
-  } catch (err) {
-    console.log(err);
-  }
-
   const logScript = `
     const logMessage = function (message) {
       window.parent.postMessage({ source: "iframe", log: message }, '*');
@@ -178,48 +180,32 @@ function setViewRender(fileTree, html, index) {
       element.innerHTML = '';
       originalClear.apply(console, args);
     };
+
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.log(message);
+    }
   `;
 
   const doc = `
-    <!DOCTYPE html>
-      <html>
-        <head>
-        </head>
-        <style>${style}</style>
-        <body>
-          ${html}
-        <body>
-        <script></script>
-        <script type="module">
-          ${dependency}
-          const info = ${info}
-          ${logScript}
-          ${code}
-        </script>
-      <html>
+  <!DOCTYPE html>
+  <html>
+    <head>
+      ${styleTagCode}
+    </head>
+    <body>
+      <script>${logScript}</script>
+      <script type="module">
+        ${dependency}
+        const info = ${info}
+        ${code}
+      </script>
+      ${htmlCode}
+      ${scriptTagCode}
+    </body>
+  <html>
     `;
 
   return doc;
-}
-
-// function customPlugin({ types: t }) {
-//   return {
-//     visitor: {
-//       ImportDeclaration(path) {
-//         const dependency = path.node.source.value;
-
-//         if (dependenciesInfo[dependency]) {
-//           path.node.source.value = dependenciesInfo[dependency];
-//         }
-//       },
-//     },
-//   };
-// }
-
-{
-  /* <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-          <meta http-equiv="Pragma" content="no-cache">
-          <meta http-equiv="Expires" content="0"></meta> */
 }
 
 export { setViewRender };

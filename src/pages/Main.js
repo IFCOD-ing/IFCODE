@@ -6,7 +6,6 @@ import react from "../react.json";
 
 import {
   findFileById,
-  findRenderFile,
   createStructureId,
   addNewFileById,
   updateFileContent,
@@ -40,7 +39,7 @@ import Log from "../components/Main/Terminal/Log";
 
 function Main() {
   // templete type
-  const [templete, setTemplete] = useState(file);
+  const [templete, setTemplete] = useState("javascript");
 
   // 파일 구조 레더링
   const [fileTree, setFileTree] = useState([]);
@@ -68,7 +67,17 @@ function Main() {
 
   // 템플릿 파잁 트리 변경
   useEffect(() => {
-    const fileInfo = createStructureId(templete);
+    let baseFile;
+
+    if (templete === "javascript") {
+      baseFile = file;
+    }
+
+    if (templete === "react") {
+      baseFile = react;
+    }
+
+    const fileInfo = createStructureId(baseFile);
     setFileTree(fileInfo);
     setFileTabInfo({});
     setSelectedFile({});
@@ -94,12 +103,20 @@ function Main() {
       return;
     }
 
-    // html 파일 가져오기
-    const html = findRenderFile(fileTree, "index.html");
-    const index = findRenderFile(fileTree, "index.js");
+    const viewOption = {
+      javascript: {
+        templete: "javascript",
+        htmlPath: "index.html",
+        entryPointPath: "src/index.js",
+      },
+      react: {
+        templete: "react",
+        htmlPath: "public/index.html",
+        entryPointPath: "src/index.js",
+      },
+    };
 
-    // html 파일 파서 후에 각 script style 파일 입력
-    const doc = setViewRender(fileTree, html, index);
+    const doc = setViewRender(fileTree, viewOption[templete]);
 
     setSrcDoc(doc);
   }, [runCount]);
@@ -219,11 +236,11 @@ function Main() {
   }
 
   function handleJavscriptClick() {
-    setTemplete(file);
+    setTemplete("javascript");
   }
 
   function handleReactClick() {
-    setTemplete(react);
+    setTemplete("react");
   }
 
   // 객체 트리구조 배열로 변환
