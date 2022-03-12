@@ -6,12 +6,12 @@ import { removeScriptTag, removeLinkTag } from "./document/removeTag";
 
 import { createGraph } from "./bundler";
 
-const dependenciesInfo = {
-  react: "https://cdn.skypack.dev/react",
-  "react-dom": "https://cdn.skypack.dev/react-dom",
-  "canvas-confetti": "https://cdn.skypack.dev/canvas-confetti",
-  "styled-components": "https://cdn.skypack.dev/styled-components",
-};
+// const dependenciesInfo = {
+//   react: "https://cdn.skypack.dev/react",
+//   "react-dom": "https://cdn.skypack.dev/react-dom",
+//   "canvas-confetti": "https://cdn.skypack.dev/canvas-confetti",
+//   "styled-components": "https://cdn.skypack.dev/styled-components",
+// };
 
 const transpileOptionInfo = {
   javascript: {
@@ -30,7 +30,7 @@ function transplie(fileContent, options) {
   }
 }
 
-function setViewRender(fileTree, type) {
+function setViewRender(fileTree, type, dependencyInfo) {
   const { templete, htmlPath, entryPointPath } = type;
 
   const htmlPathArray = htmlPath.split("/");
@@ -75,7 +75,7 @@ function setViewRender(fileTree, type) {
   const { files, dependencies } = createGraph(
     fileTree,
     entryPointPath,
-    dependenciesInfo
+    dependencyInfo
   );
 
   const transpiledFiles = files.map(

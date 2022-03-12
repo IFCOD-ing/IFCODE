@@ -22,6 +22,8 @@ import MainNav from "../components/Main/MainNav";
 import Menu from "../components/Main/Menu";
 import MainPane from "../components/Main/MainPane";
 
+import DependencyBox from "../components/Main/DependencyBox";
+
 import PaneContainer from "../components/Main/SplitPane/PaneContainer";
 import ContentContainer from "../components/Main/ContentContainer";
 
@@ -36,6 +38,7 @@ import FileForm from "../components/Main/FileForm";
 
 import Terminal from "../components/Main/Terminal/Terminal";
 import Log from "../components/Main/Terminal/Log";
+import CloseButton from "../components/common/CloseButton";
 
 function Main() {
   // templete type
@@ -51,6 +54,14 @@ function Main() {
   // fireform
   const [isFileFormShow, setIsFileFormShow] = useState(false);
   const [updateFolderId, setUpdateFolderId] = useState({});
+
+  // dependency form
+  const [isDependencyFormShow, setIsDependencyFormShow] = useState(false);
+  const [dependencyFormErrorMessage, setDependencyFormErrorMessage] =
+    useState("");
+
+  // dependency List
+  const [dependencyInfo, setDependencyInfo] = useState({});
 
   // inputCode
   const [inputCode, setInputCode] = useState(null);
@@ -116,7 +127,7 @@ function Main() {
       },
     };
 
-    const doc = setViewRender(fileTree, viewOption[templete]);
+    const doc = setViewRender(fileTree, viewOption[templete], dependencyInfo);
 
     setSrcDoc(doc);
   }, [runCount]);
@@ -198,6 +209,38 @@ function Main() {
     event.target.fileName.value = "";
   }
 
+  // 디펜던기 form show
+  function handleDependencyAddButtonClick() {
+    setIsDependencyFormShow(true);
+  }
+
+  // 디펜던시 취소
+  function handleDependencyFormCancelButtonClick() {
+    setIsDependencyFormShow(false);
+  }
+
+  // 디펜던시 추가 버튼
+  function addNewDependency(event) {
+    event.preventDefault();
+    const dependency = event.target.fileName.value;
+
+    const dependencyName = dependency.slice(dependency.indexOf(".dev/") + 5);
+
+    if (dependencyInfo[dependencyName]) {
+      setDependencyFormErrorMessage("이미 등록된 디펜던시 입니다.");
+      event.target.fileName.value = "";
+      return;
+    }
+
+    setDependencyInfo({ ...dependencyInfo, [dependencyName]: dependency });
+    event.target.fileName.value = "";
+  }
+
+  function handleDependencyDeleteButtonClick(dependency) {
+    delete dependencyInfo[dependency];
+    setDependencyInfo({ ...dependencyInfo });
+  }
+
   // 탭 클릭 파일 내용 변환
   function handleTabClick(fileId) {
     const selectedFile = findFileById(fileTree, fileId);
@@ -245,6 +288,7 @@ function Main() {
 
   // 객체 트리구조 배열로 변환
   const fileTabInfoList = Object.entries(fileTabInfo);
+  const dependencyInfoList = Object.keys(dependencyInfo);
 
   return (
     <MainWrapper>
@@ -274,7 +318,36 @@ function Main() {
             onSubmitFile={addNewFile}
             onCancel={handleCancelFileButtonClick}
             errorMessage={errorMessage}
+            placeholderText="input file or folder name"
           />
+        </Menu>
+        <Menu
+          title="dependency"
+          titleSub={
+            <button
+              className="add-button"
+              onClick={handleDependencyAddButtonClick}
+            >
+              add
+            </button>
+          }
+        >
+          <FileForm
+            isShow={isDependencyFormShow}
+            onSubmitFile={addNewDependency}
+            onCancel={handleDependencyFormCancelButtonClick}
+            errorMessage={dependencyFormErrorMessage}
+            placeholderText="input CDN link"
+          />
+          <div className="dependency-wrapper">
+            {dependencyInfoList.map((value) => (
+              <DependencyBox key={value} title={value}>
+                <CloseButton
+                  onClick={() => handleDependencyDeleteButtonClick(value)}
+                />
+              </DependencyBox>
+            ))}
+          </div>
         </Menu>
       </MainNav>
       <MainPane>
@@ -333,27 +406,8 @@ const MainWrapper = styled.div`
     background-color: white;
   }
 
-  .box {
-    width: 100%;
-    height: 400px;
-    border-bottom: 1px solid #343434;
-
-    .title-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #343434;
-      height: 40px;
-      line-height: 40px;
-      margin-left: 20px;
-      font-size: 20px;
-      margin-right: 20px;
-
-      .run-button {
-        height: 20px;
-        width: 40px;
-      }
-    }
+  .dependency-wrapper {
+    padding: 0 10px;
   }
 
   .view {
