@@ -61,6 +61,8 @@ function Folder({
   children,
   onClickFileAddButton,
   onClickFolderAddButton,
+  onClickFolderEditButton,
+  onClickFolderDeleteButton,
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -76,10 +78,10 @@ function Folder({
           <span>{name}</span>
         </div>
         <div className="actions">
-          <AiOutlineEdit />
+          <AiOutlineEdit onClick={onClickFolderEditButton} />
           <AiOutlineFileAdd onClick={onClickFileAddButton} />
           <AiOutlineFolderAdd onClick={onClickFolderAddButton} />
-          <AiOutlineDelete />
+          <AiOutlineDelete onClick={onClickFolderDeleteButton} />
         </div>
       </div>
       <Collapsible isOpen={isOpen}>{children}</Collapsible>
@@ -93,6 +95,8 @@ Folder.propTypes = {
   children: PropTypes.node,
   onClickFileAddButton: PropTypes.func.isRequired,
   onClickFolderAddButton: PropTypes.func,
+  onClickFolderEditButton: PropTypes.func,
+  onClickFolderDeleteButton: PropTypes.func,
 };
 
 export default Folder;

@@ -9,6 +9,9 @@ import {
   createStructureId,
   addNewFileById,
   updateFileContent,
+  editFileOrFolderName,
+  delteFileOrFolderName,
+  getAllFiles,
 } from "../helper/searchDfs";
 
 import { setViewRender } from "../helper/setViewRender";
@@ -161,14 +164,51 @@ function Main() {
 
   // 폴더에서 파일 추가 버튼 클릭시 file form show
   function handleFileAddButtonClick(folderId) {
-    setIsFileFormShow("file");
-    setUpdateFolderId({ type: "file", id: folderId });
+    setIsFileFormShow(true);
+    setUpdateFolderId({ type: "file", id: folderId, action: "new" });
   }
 
   // 폴더 추가
   function handleFolderAddButtonClick(folderId) {
-    setIsFileFormShow("folder");
-    setUpdateFolderId({ type: "folder", id: folderId });
+    setIsFileFormShow(true);
+    setUpdateFolderId({ type: "folder", id: folderId, action: "new" });
+  }
+
+  // 파일 이름 수정
+  function handleFileEditButtonClick(fileId) {
+    setIsFileFormShow(true);
+    setUpdateFolderId({ type: "file", id: fileId, action: "edit" });
+  }
+
+  // 폴더 이름 수정
+  function handleFolderEditButtonClick(fileId) {
+    setIsFileFormShow(true);
+    setUpdateFolderId({ type: "folder", id: fileId, action: "edit" });
+  }
+
+  // 파일 삭제
+  function handleFileDeleteButtonClick(fileId) {
+    const { updatedFileTree } = delteFileOrFolderName(fileTree, fileId);
+
+    setFileTree(updatedFileTree);
+    handleCloseTab(fileId);
+  }
+
+  // 폴더 삭제
+  function handleFolderDeleteButtonClick(folderId) {
+    const { updatedFileTree, removedFolder } = delteFileOrFolderName(
+      fileTree,
+      folderId
+    );
+
+    const childrenFiles = getAllFiles(removedFolder);
+
+    childrenFiles.forEach((value) => {
+      delete fileTabInfo[value];
+    });
+
+    setFileTree(updatedFileTree);
+    setFileTabInfo(fileTabInfo);
   }
 
   // file from 취소 버튼 클릭
@@ -189,12 +229,28 @@ function Main() {
       return;
     }
 
-    const newFileTree = addNewFileById(
-      fileTree,
-      updateFolderId.id,
-      fileName,
-      isFileFormShow
-    );
+    let result;
+
+    if (updateFolderId.action === "edit") {
+      result = editFileOrFolderName(fileTree, updateFolderId.id, fileName);
+      handleCloseTab(updateFolderId.id);
+    }
+
+    if (updateFolderId.action === "new") {
+      result = addNewFileById(
+        fileTree,
+        updateFolderId.id,
+        fileName,
+        updateFolderId.type,
+        updateFolderId.action
+      );
+    }
+
+    if (updateFolderId.action === "delete") {
+      result = delteFileOrFolderName(fileTree, updateFolderId.id);
+    }
+
+    const newFileTree = result;
 
     if (typeof newFileTree === "string") {
       setErrorMessage(newFileTree);
@@ -312,6 +368,10 @@ function Main() {
             onNodeClick={handleFileClick}
             onAddFile={handleFileAddButtonClick}
             onAddFolder={handleFolderAddButtonClick}
+            onEditFile={handleFileEditButtonClick}
+            onEditFolder={handleFolderEditButtonClick}
+            onDeleteFile={handleFileDeleteButtonClick}
+            onDeleteFolder={handleFolderDeleteButtonClick}
           />
           <FileForm
             isShow={isFileFormShow}

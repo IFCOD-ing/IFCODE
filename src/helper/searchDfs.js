@@ -17,6 +17,8 @@ function createStructureId(fileStructure) {
 
   travelsalTree(cloneFileStructure);
 
+  console.log(cloneFileStructure);
+
   return cloneFileStructure;
 }
 
@@ -39,7 +41,7 @@ function addFileById(file, id, name) {
   travelsalTree(file, id);
 }
 
-function addNewFileById(fileTree, folderId, name, type) {
+function addNewFileById(fileTree, folderId, name, type, action) {
   const cloneFileTree = _.cloneDeep(fileTree);
   let error = "";
 
@@ -51,6 +53,15 @@ function addNewFileById(fileTree, folderId, name, type) {
     for (let i = 0; i < data.length; i++) {
       if (data[i].id === folderId) {
         if (type === "file") {
+          const file = data[i].childrens.find(
+            ({ name: fileName }) => fileName === name
+          );
+
+          if (file) {
+            error = "이미 존재하는 파일입니다.";
+            return;
+          }
+
           data[i].childrens.push({ type, name, id: nanoid() });
         }
 
@@ -60,7 +71,7 @@ function addNewFileById(fileTree, folderId, name, type) {
           );
 
           if (folder) {
-            error = "이미 존재하는 파일입니다.";
+            error = "이미 존재하는 폴더입니다.";
             return;
           }
 
@@ -81,6 +92,92 @@ function addNewFileById(fileTree, folderId, name, type) {
   }
 
   return cloneFileTree;
+}
+
+function editFileOrFolderName(fileTree, id, editedName) {
+  const cloneFileTree = _.cloneDeep(fileTree);
+  let error = "";
+
+  function travelsalTree(data, id, editedName) {
+    if (!data) {
+      return;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].id === id) {
+        const sameFileOrFolder = data.find(({ name }) => name === editedName);
+
+        if (sameFileOrFolder) {
+          error = "이미 존재하는 이름입니다.";
+          return;
+        }
+
+        data[i].name = editedName;
+
+        return;
+      }
+
+      travelsalTree(data[i].childrens, id, editedName);
+    }
+  }
+
+  travelsalTree(cloneFileTree, id, editedName);
+
+  if (error) {
+    return error;
+  }
+
+  return cloneFileTree;
+}
+
+function delteFileOrFolderName(fileTree, id) {
+  const cloneFileTree = _.cloneDeep(fileTree);
+  let error = "";
+
+  function travelsalTree(data, id) {
+    if (!data) {
+      return;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].id === id) {
+        const removedFolder = data.splice(i, 1);
+        return removedFolder;
+      }
+
+      return travelsalTree(data[i].childrens, id);
+    }
+  }
+
+  const removedFolder = travelsalTree(cloneFileTree, id);
+
+  if (error) {
+    return error;
+  }
+
+  return { updatedFileTree: cloneFileTree, removedFolder };
+}
+
+function getAllFiles(fileTree) {
+  const childrenIdList = [];
+
+  function travelsalTree(data) {
+    if (!data) {
+      return;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].type === "file") {
+        childrenIdList.push(data[i].id);
+      }
+
+      travelsalTree(data[i].childrens);
+    }
+  }
+
+  travelsalTree(fileTree);
+
+  return childrenIdList;
 }
 
 function findFileById(fileStructure, id) {
@@ -179,4 +276,7 @@ export {
   findRenderFile,
   addNewFileById,
   updateFileContent,
+  editFileOrFolderName,
+  delteFileOrFolderName,
+  getAllFiles,
 };
