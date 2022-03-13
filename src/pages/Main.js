@@ -4,6 +4,8 @@ import styled from "styled-components";
 import file from "../file.json";
 import react from "../react.json";
 
+import { AiOutlineFolderAdd, AiOutlineFileAdd } from "react-icons/ai";
+
 import {
   findFileById,
   createStructureId,
@@ -194,6 +196,8 @@ function Main() {
     handleCloseTab(fileId);
   }
 
+  // root file 생성
+
   // 폴더 삭제
   function handleFolderDeleteButtonClick(folderId) {
     const { updatedFileTree, removedFolder } = delteFileOrFolderName(
@@ -358,9 +362,19 @@ function Main() {
         <Menu
           title="File"
           titleSub={
-            <button className="run-button" onClick={handleRunButtonClick}>
-              run
-            </button>
+            <>
+              <div className="title-actions">
+                <AiOutlineFolderAdd
+                  onClick={() => handleFolderAddButtonClick("root")}
+                />
+                <AiOutlineFileAdd
+                  onClick={() => handleFileAddButtonClick("root")}
+                />
+              </div>
+              <button className="run-button" onClick={handleRunButtonClick}>
+                run
+              </button>
+            </>
           }
         >
           <Tree
@@ -461,6 +475,33 @@ const MainWrapper = styled.div`
   display: flex;
   flex: 1 1 0;
   height: 100%;
+
+  .title-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+
+    svg {
+      cursor: pointer;
+      margin-left: 10px;
+      transform: scale(1);
+      transition: 0.2s;
+
+      :hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &:hover .title-actions {
+    opacity: 1;
+    pointer-events: all;
+    transition: 0.2s;
+  }
 
   iframe {
     background-color: white;

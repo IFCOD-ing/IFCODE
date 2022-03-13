@@ -6,13 +6,6 @@ import { removeScriptTag, removeLinkTag } from "./document/removeTag";
 
 import { createGraph } from "./bundler";
 
-// const dependenciesInfo = {
-//   react: "https://cdn.skypack.dev/react",
-//   "react-dom": "https://cdn.skypack.dev/react-dom",
-//   "canvas-confetti": "https://cdn.skypack.dev/canvas-confetti",
-//   "styled-components": "https://cdn.skypack.dev/styled-components",
-// };
-
 const transpileOptionInfo = {
   javascript: {
     presets: [["es2015"]],
