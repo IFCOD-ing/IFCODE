@@ -40,7 +40,7 @@ function Menu({ title, titleSub, children }) {
 Menu.propTypes = {
   title: PropTypes.string.isRequired,
   titleSub: PropTypes.node,
-  children: PropTypes.children,
+  children: PropTypes.node,
 };
 
 export default Menu;

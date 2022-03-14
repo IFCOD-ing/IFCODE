@@ -7,8 +7,6 @@ import { javascript } from "@codemirror/lang-javascript";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 
-// javascript({ jsx: true })
-
 const Wrapper = styled.div`
   .cm-editor {
     background-color: #151515;
@@ -50,7 +48,7 @@ function CodeEditor({ file, onContentChange }) {
 
 CodeEditor.propTypes = {
   file: PropTypes.object.isRequired,
-  onContentChange: PropTypes.func,
+  onContentChange: PropTypes.func.isRequired,
 };
 
 export default CodeEditor;

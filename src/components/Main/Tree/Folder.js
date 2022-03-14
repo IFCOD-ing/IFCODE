@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
 import PropTypes from "prop-types";
 
 import {
@@ -90,7 +89,6 @@ function Folder({
 }
 
 Folder.propTypes = {
-  // id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   children: PropTypes.node,
   onClickFileAddButton: PropTypes.func.isRequired,
