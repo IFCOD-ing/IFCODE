@@ -13,7 +13,13 @@ const FILE_ICONS = {
   jsx: <DiReact />,
 };
 
-function File({ name, id, onClick }) {
+function File({
+  name,
+  id,
+  onClick,
+  onClickFileEditButton,
+  onClickFileDeleteButton,
+}) {
   const ext = name.split(".")[1];
 
   return (
@@ -23,8 +29,8 @@ function File({ name, id, onClick }) {
         {name}
       </span>
       <div className="actions">
-        <AiOutlineEdit />
-        <AiOutlineDelete />
+        <AiOutlineEdit onClick={onClickFileEditButton} />
+        <AiOutlineDelete onClick={onClickFileDeleteButton} />
       </div>
     </FileWrapper>
   );
@@ -72,6 +78,8 @@ File.propTypes = {
   name: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
+  onClickFileEditButton: PropTypes.func.isRequired,
+  onClickFileDeleteButton: PropTypes.func,
 };
 
 export default File;

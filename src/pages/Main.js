@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-console.log(React.default);
-
 import file from "../file.json";
 import react from "../react.json";
 
+import { AiOutlineFolderAdd, AiOutlineFileAdd } from "react-icons/ai";
+
 import {
   findFileById,
-  findRenderFile,
   createStructureId,
   addNewFileById,
   updateFileContent,
+  editFileOrFolderName,
+  delteFileOrFolderName,
+  getAllFiles,
 } from "../helper/searchDfs";
 
 import { setViewRender } from "../helper/setViewRender";
+
+import { validationInputText } from "../helper/validate";
 
 import javascriptSvg from "../assets/images/javascript.svg";
 import reactSvg from "../assets/images/react.svg";
@@ -22,6 +26,8 @@ import reactSvg from "../assets/images/react.svg";
 import MainNav from "../components/Main/MainNav";
 import Menu from "../components/Main/Menu";
 import MainPane from "../components/Main/MainPane";
+
+import DependencyBox from "../components/Main/DependencyBox";
 
 import PaneContainer from "../components/Main/SplitPane/PaneContainer";
 import ContentContainer from "../components/Main/ContentContainer";
@@ -37,10 +43,11 @@ import FileForm from "../components/Main/FileForm";
 
 import Terminal from "../components/Main/Terminal/Terminal";
 import Log from "../components/Main/Terminal/Log";
+import CloseButton from "../components/common/CloseButton";
 
 function Main() {
   // templete type
-  const [templete, setTemplete] = useState(file);
+  const [templete, setTemplete] = useState("javascript");
 
   // 파일 구조 레더링
   const [fileTree, setFileTree] = useState([]);
@@ -51,7 +58,15 @@ function Main() {
 
   // fireform
   const [isFileFormShow, setIsFileFormShow] = useState(false);
-  const [updateFolderId, setUpdateFolderId] = useState("");
+  const [updateFolderId, setUpdateFolderId] = useState({});
+
+  // dependency form
+  const [isDependencyFormShow, setIsDependencyFormShow] = useState(false);
+  const [dependencyFormErrorMessage, setDependencyFormErrorMessage] =
+    useState("");
+
+  // dependency List
+  const [dependencyInfo, setDependencyInfo] = useState({});
 
   // inputCode
   const [inputCode, setInputCode] = useState(null);
@@ -63,9 +78,22 @@ function Main() {
   // log
   const [logList, setLogList] = useState([]);
 
+  // fileForm 에러 메세지
+  const [errorMessage, setErrorMessage] = useState("");
+
   // 템플릿 파잁 트리 변경
   useEffect(() => {
-    const fileInfo = createStructureId(templete);
+    let baseFile;
+
+    if (templete === "javascript") {
+      baseFile = file;
+    }
+
+    if (templete === "react") {
+      baseFile = react;
+    }
+
+    const fileInfo = createStructureId(baseFile);
     setFileTree(fileInfo);
     setFileTabInfo({});
     setSelectedFile({});
@@ -91,12 +119,20 @@ function Main() {
       return;
     }
 
-    // html 파일 가져오기
-    const html = findRenderFile(fileTree, "index.html");
-    const index = findRenderFile(fileTree, "index.js");
+    const viewOption = {
+      javascript: {
+        templete: "javascript",
+        htmlPath: "index.html",
+        entryPointPath: "src/index.js",
+      },
+      react: {
+        templete: "react",
+        htmlPath: "public/index.html",
+        entryPointPath: "src/index.js",
+      },
+    };
 
-    // html 파일 파서 후에 각 script style 파일 입력
-    const doc = setViewRender(fileTree, html, index);
+    const doc = setViewRender(fileTree, viewOption[templete], dependencyInfo);
 
     setSrcDoc(doc);
   }, [runCount]);
@@ -130,14 +166,53 @@ function Main() {
 
   // 폴더에서 파일 추가 버튼 클릭시 file form show
   function handleFileAddButtonClick(folderId) {
-    setIsFileFormShow("file");
-    setUpdateFolderId(folderId);
+    setIsFileFormShow(true);
+    setUpdateFolderId({ type: "file", id: folderId, action: "new" });
   }
 
   // 폴더 추가
   function handleFolderAddButtonClick(folderId) {
-    setIsFileFormShow("folder");
-    setUpdateFolderId(folderId);
+    setIsFileFormShow(true);
+    setUpdateFolderId({ type: "folder", id: folderId, action: "new" });
+  }
+
+  // 파일 이름 수정
+  function handleFileEditButtonClick(fileId) {
+    setIsFileFormShow(true);
+    setUpdateFolderId({ type: "file", id: fileId, action: "edit" });
+  }
+
+  // 폴더 이름 수정
+  function handleFolderEditButtonClick(fileId) {
+    setIsFileFormShow(true);
+    setUpdateFolderId({ type: "folder", id: fileId, action: "edit" });
+  }
+
+  // 파일 삭제
+  function handleFileDeleteButtonClick(fileId) {
+    const { updatedFileTree } = delteFileOrFolderName(fileTree, fileId);
+
+    setFileTree(updatedFileTree);
+    handleCloseTab(fileId);
+  }
+
+  // root file 생성
+
+  // 폴더 삭제
+  function handleFolderDeleteButtonClick(folderId) {
+    const { updatedFileTree, removedFolder } = delteFileOrFolderName(
+      fileTree,
+      folderId
+    );
+
+    const childrenFiles = getAllFiles(removedFolder);
+
+    childrenFiles.forEach((value) => {
+      delete fileTabInfo[value];
+    });
+
+    setFileTree(updatedFileTree);
+    setFileTabInfo(fileTabInfo);
   }
 
   // file from 취소 버튼 클릭
@@ -150,18 +225,80 @@ function Main() {
     event.preventDefault();
     const fileName = event.target.fileName.value;
 
-    const newFileTree = addNewFileById(
-      fileTree,
-      updateFolderId,
-      fileName,
-      isFileFormShow
-    );
+    const validationResult = validationInputText(fileName, updateFolderId.type);
+
+    if (validationResult) {
+      setErrorMessage(validationResult);
+      event.target.fileName.value = "";
+      return;
+    }
+
+    let result;
+
+    if (updateFolderId.action === "edit") {
+      result = editFileOrFolderName(fileTree, updateFolderId.id, fileName);
+      handleCloseTab(updateFolderId.id);
+    }
+
+    if (updateFolderId.action === "new") {
+      result = addNewFileById(
+        fileTree,
+        updateFolderId.id,
+        fileName,
+        updateFolderId.type,
+        updateFolderId.action
+      );
+    }
+
+    if (updateFolderId.action === "delete") {
+      result = delteFileOrFolderName(fileTree, updateFolderId.id);
+    }
+
+    const newFileTree = result;
+
+    if (typeof newFileTree === "string") {
+      setErrorMessage(newFileTree);
+      event.target.fileName.value = "";
+      return;
+    }
 
     setFileTree(newFileTree);
     setIsFileFormShow(false);
     setUpdateFolderId("");
 
     event.target.fileName.value = "";
+  }
+
+  // 디펜던기 form show
+  function handleDependencyAddButtonClick() {
+    setIsDependencyFormShow(true);
+  }
+
+  // 디펜던시 취소
+  function handleDependencyFormCancelButtonClick() {
+    setIsDependencyFormShow(false);
+  }
+
+  // 디펜던시 추가 버튼
+  function addNewDependency(event) {
+    event.preventDefault();
+    const dependency = event.target.fileName.value;
+
+    const dependencyName = dependency.slice(dependency.indexOf(".dev/") + 5);
+
+    if (dependencyInfo[dependencyName]) {
+      setDependencyFormErrorMessage("이미 등록된 디펜던시 입니다.");
+      event.target.fileName.value = "";
+      return;
+    }
+
+    setDependencyInfo({ ...dependencyInfo, [dependencyName]: dependency });
+    event.target.fileName.value = "";
+  }
+
+  function handleDependencyDeleteButtonClick(dependency) {
+    delete dependencyInfo[dependency];
+    setDependencyInfo({ ...dependencyInfo });
   }
 
   // 탭 클릭 파일 내용 변환
@@ -202,15 +339,16 @@ function Main() {
   }
 
   function handleJavscriptClick() {
-    setTemplete(file);
+    setTemplete("javascript");
   }
 
   function handleReactClick() {
-    setTemplete(react);
+    setTemplete("react");
   }
 
   // 객체 트리구조 배열로 변환
   const fileTabInfoList = Object.entries(fileTabInfo);
+  const dependencyInfoList = Object.keys(dependencyInfo);
 
   return (
     <MainWrapper>
@@ -224,9 +362,19 @@ function Main() {
         <Menu
           title="File"
           titleSub={
-            <button className="run-button" onClick={handleRunButtonClick}>
-              run
-            </button>
+            <>
+              <div className="title-actions">
+                <AiOutlineFolderAdd
+                  onClick={() => handleFolderAddButtonClick("root")}
+                />
+                <AiOutlineFileAdd
+                  onClick={() => handleFileAddButtonClick("root")}
+                />
+              </div>
+              <button className="run-button" onClick={handleRunButtonClick}>
+                run
+              </button>
+            </>
           }
         >
           <Tree
@@ -234,12 +382,46 @@ function Main() {
             onNodeClick={handleFileClick}
             onAddFile={handleFileAddButtonClick}
             onAddFolder={handleFolderAddButtonClick}
+            onEditFile={handleFileEditButtonClick}
+            onEditFolder={handleFolderEditButtonClick}
+            onDeleteFile={handleFileDeleteButtonClick}
+            onDeleteFolder={handleFolderDeleteButtonClick}
           />
           <FileForm
             isShow={isFileFormShow}
             onSubmitFile={addNewFile}
             onCancel={handleCancelFileButtonClick}
+            errorMessage={errorMessage}
+            placeholderText="input file or folder name"
           />
+        </Menu>
+        <Menu
+          title="dependency"
+          titleSub={
+            <button
+              className="add-button"
+              onClick={handleDependencyAddButtonClick}
+            >
+              add
+            </button>
+          }
+        >
+          <FileForm
+            isShow={isDependencyFormShow}
+            onSubmitFile={addNewDependency}
+            onCancel={handleDependencyFormCancelButtonClick}
+            errorMessage={dependencyFormErrorMessage}
+            placeholderText="input CDN link"
+          />
+          <div className="dependency-wrapper">
+            {dependencyInfoList.map((value) => (
+              <DependencyBox key={value} title={value}>
+                <CloseButton
+                  onClick={() => handleDependencyDeleteButtonClick(value)}
+                />
+              </DependencyBox>
+            ))}
+          </div>
         </Menu>
       </MainNav>
       <MainPane>
@@ -294,31 +476,39 @@ const MainWrapper = styled.div`
   flex: 1 1 0;
   height: 100%;
 
+  .title-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+
+    svg {
+      cursor: pointer;
+      margin-left: 10px;
+      transform: scale(1);
+      transition: 0.2s;
+
+      :hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &:hover .title-actions {
+    opacity: 1;
+    pointer-events: all;
+    transition: 0.2s;
+  }
+
   iframe {
     background-color: white;
   }
 
-  .box {
-    width: 100%;
-    height: 400px;
-    border-bottom: 1px solid #343434;
-
-    .title-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #343434;
-      height: 40px;
-      line-height: 40px;
-      margin-left: 20px;
-      font-size: 20px;
-      margin-right: 20px;
-
-      .run-button {
-        height: 20px;
-        width: 40px;
-      }
-    }
+  .dependency-wrapper {
+    padding: 0 10px;
   }
 
   .view {

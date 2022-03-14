@@ -10,7 +10,16 @@ const TreeWrapper = styled.div`
   line-height: 1.5; ;
 `;
 
-function Tree({ data, onNodeClick, onAddFile, onAddFolder }) {
+function Tree({
+  data,
+  onNodeClick,
+  onAddFile,
+  onAddFolder,
+  onEditFile,
+  onEditFolder,
+  onDeleteFile,
+  onDeleteFolder,
+}) {
   return (
     <TreeWrapper>
       {data.map((item) => {
@@ -21,6 +30,8 @@ function Tree({ data, onNodeClick, onAddFile, onAddFolder }) {
               id={item.id}
               name={item.name}
               onClick={() => onNodeClick(item.id)}
+              onClickFileEditButton={() => onEditFile(item.id)}
+              onClickFileDeleteButton={() => onDeleteFile(item.id)}
             />
           );
         }
@@ -31,12 +42,18 @@ function Tree({ data, onNodeClick, onAddFile, onAddFolder }) {
               name={item.name}
               onClickFileAddButton={() => onAddFile(item.id)}
               onClickFolderAddButton={() => onAddFolder(item.id)}
+              onClickFolderEditButton={() => onEditFolder(item.id)}
+              onClickFolderDeleteButton={() => onDeleteFolder(item.id)}
             >
               <Tree
                 data={item.childrens}
                 onNodeClick={onNodeClick}
                 onAddFile={onAddFile}
                 onAddFolder={onAddFolder}
+                onEditFile={onEditFile}
+                onEditFolder={onEditFolder}
+                onDeleteFile={onDeleteFile}
+                onDeleteFolder={onDeleteFolder}
               />
             </Folder>
           );
@@ -51,6 +68,10 @@ Tree.propTypes = {
   onNodeClick: PropTypes.func,
   onAddFile: PropTypes.func,
   onAddFolder: PropTypes.func,
+  onEditFile: PropTypes.func,
+  onEditFolder: PropTypes.func,
+  onDeleteFile: PropTypes.func,
+  onDeleteFolder: PropTypes.func,
 };
 
 export default Tree;

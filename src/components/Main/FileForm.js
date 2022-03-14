@@ -5,8 +5,7 @@ import styled from "styled-components";
 
 const FileFormWrapper = styled.div`
   display: ${(props) => (props.isDisplay ? undefined : "none")};
-  height: 100px;
-  margin-top: 10px;
+  height: 120px;
   border-top: 1px solid #343434;
   border-bottom: 1px solid #343434;
 
@@ -34,20 +33,32 @@ const FileFormWrapper = styled.div`
     button:hover {
       background-color: #0fd1c9;
     }
+
+    p {
+      font-size: 12px;
+      color: red;
+    }
   }
 `;
 
-function FileForm({ isShow, onSubmitFile, onCancel }) {
+function FileForm({
+  isShow,
+  onSubmitFile,
+  onCancel,
+  errorMessage,
+  placeholderText,
+}) {
   return (
     <FileFormWrapper isDisplay={isShow}>
       <form className="input-form" onSubmit={onSubmitFile}>
-        <input name="fileName" placeholder="input file or folder name" />
+        <input name="fileName" placeholder={placeholderText} />
         <div>
           <button type="button" onClick={onCancel}>
             취소
           </button>
           <button type="submit">생성</button>
         </div>
+        <p>{errorMessage}</p>
       </form>
     </FileFormWrapper>
   );
@@ -57,6 +68,8 @@ FileForm.propTypes = {
   isShow: PropTypes.bool.isRequired,
   onSubmitFile: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
+  placeholderText: PropTypes.string,
 };
 
 export default FileForm;
