@@ -1,6 +1,5 @@
 import { transform } from "@babel/standalone";
 import { customAlphabet } from "nanoid";
-
 import { findFileByPath } from "./fileTreeHelper";
 
 function createGraph(fileTree, entryFilePath, dependencyInfo) {
