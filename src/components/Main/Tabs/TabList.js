@@ -5,7 +5,8 @@ import PropTypes from "prop-types";
 const TabListWrapper = styled.div`
   display: flex;
   z-index: 1;
-  overflow-x: auto;
+  overflow-x: scroll;
+  width: 80vw;
   height: 5vh;
   border-bottom: 1px solid ${(props) => props.theme.mainColor};
   background-color: ${(props) => props.theme.backgroundColor};
