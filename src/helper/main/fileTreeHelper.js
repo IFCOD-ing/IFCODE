@@ -150,7 +150,7 @@ function delteFileOrFolderName(fileTree, id) {
         return removedFolder;
       }
 
-      return travelsalTree(data[i].childrens, id);
+      travelsalTree(data[i].childrens, id);
     }
   }
 

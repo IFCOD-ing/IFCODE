@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 const NavWrapper = styled.div`
   overflow-y: auto;
-  min-width: 300px;
+  min-width: 20vw;
   height: 93vh;
   border-right: 5px solid ${(props) => props.theme.mainColor};
   background-color: ${(props) => props.theme.backgroundColor};
