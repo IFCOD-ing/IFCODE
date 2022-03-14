@@ -2,13 +2,20 @@ import { Parser } from "htmlparser2";
 
 function findScriptTag(html) {
   let currentSrc = "";
-  const pathList = [];
+  let isModuleType = false;
+  const nonModulePathList = [];
+  const modulePathList = [];
 
   const parser = new Parser({
     onopentag(name, attributes) {
       if (name === "script") {
+        isModuleType = false;
         currentSrc = "";
         currentSrc = attributes.src;
+
+        if (attributes.type === "module") {
+          isModuleType = true;
+        }
       }
     },
     onclosetag(tagname) {
@@ -23,19 +30,25 @@ function findScriptTag(html) {
         ) {
           return;
         }
-        pathList.push(currentSrc);
+
+        if (isModuleType) {
+          modulePathList.push(currentSrc);
+        } else {
+          nonModulePathList.push(currentSrc);
+        }
       }
     },
   });
+
   parser.write(html);
   parser.end();
 
-  return pathList;
+  return { nonModulePathList, modulePathList };
 }
 
 function findLinkTag(html) {
   let currentSrc = "";
-  const pathList = [];
+  const styleLinkPathList = [];
 
   const parser = new Parser({
     onopentag(name, attributes) {
@@ -46,14 +59,14 @@ function findLinkTag(html) {
     },
     onclosetag(tagname) {
       if (tagname === "link") {
-        pathList.push(currentSrc);
+        styleLinkPathList.push(currentSrc);
       }
     },
   });
   parser.write(html);
   parser.end();
 
-  return pathList;
+  return styleLinkPathList;
 }
 
 export { findScriptTag, findLinkTag };

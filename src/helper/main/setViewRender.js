@@ -29,23 +29,28 @@ function setViewRender(fileTree, type, dependencyInfo) {
   const htmlPathArray = htmlPath.split("/");
   const htmlFile = findFileByPath(fileTree, htmlPathArray);
 
-  const scriptPathList = findScriptTag(htmlFile);
+  const { nonModulePathList, modulePathList } = findScriptTag(htmlFile);
   const styleLinkList = findLinkTag(htmlFile);
 
   let htmlCode = "";
   let scriptTagCode = "";
   let styleTagCode = "";
 
-  htmlCode = removeScriptTag(htmlFile, scriptPathList);
+  htmlCode = removeScriptTag(
+    htmlFile,
+    nonModulePathList.concat(modulePathList)
+  );
   htmlCode = removeLinkTag(htmlCode, styleLinkList);
 
-  scriptPathList.forEach((value) => {
+  nonModulePathList.forEach((value) => {
     const path = value.split("/");
     const scriptCode = findFileByPath(fileTree, path);
 
     const scriptTag = `
       <script>
-        ${transplie(scriptCode, transpileOptionInfo[templete])}
+        ${transplie(scriptCode, {
+          presets: [["es2015", { modules: false }]],
+        })}
       </script>
     `;
 
@@ -56,37 +61,68 @@ function setViewRender(fileTree, type, dependencyInfo) {
     const path = value.split("/");
     const styleCode = findFileByPath(fileTree, path);
 
-    const scriptTag = `
+    const styleTag = `
       <style>
         ${styleCode}
       </style>
     `;
 
-    styleTagCode = styleTagCode.concat(scriptTag);
+    styleTagCode = styleTagCode.concat(styleTag);
   });
 
-  const { files, dependencies } = createGraph(
-    fileTree,
-    entryPointPath,
-    dependencyInfo
-  );
+  const dependencyList = [];
+  const totalModuleList = [];
 
-  const transpiledFiles = files.map(
-    ({ fileName, content }) => `
-    {
-      fileName: "${fileName}",
-      func: function (require, exports) {
-        ${transplie(content, transpileOptionInfo[templete])}
-      },
-      exports: {}
-    }
-  `
-  );
+  if (entryPointPath) {
+    const { files, dependencies } = createGraph(
+      fileTree,
+      entryPointPath,
+      dependencyInfo
+    );
+
+    const transpiledFiles = files.map(
+      ({ fileName, content }) => `
+        {
+          fileName: "${fileName}",
+          func: function (require, exports) {
+            ${transplie(content, transpileOptionInfo[templete])}
+          },
+          exports: {}
+        }
+      `
+    );
+
+    totalModuleList.push(transpiledFiles);
+    dependencyList.push(...dependencies);
+  }
+
+  modulePathList.forEach((value) => {
+    const { files, dependencies } = createGraph(
+      fileTree,
+      value,
+      dependencyInfo
+    );
+
+    const transpiledFiles = files.map(
+      ({ fileName, content }) => `
+        {
+          fileName: "${fileName}",
+          func: function (require, exports) {
+            ${transplie(content, transpileOptionInfo[templete])}
+          },
+          exports: {}
+        }
+      `
+    );
+
+    totalModuleList.push(transpiledFiles);
+    dependencyList.push(...dependencies);
+  });
 
   let dependency = "";
   let dependencyValue = "";
 
-  dependencies.forEach((value) => {
+  dependencyList.forEach((value) => {
     dependency += "\n" + value.content;
     dependencyValue += value.name + ",\n";
   });
@@ -97,7 +133,7 @@ function setViewRender(fileTree, type, dependencyInfo) {
     }
   `;
 
-  const transpiledDependencise = dependencies.map(
+  const transpiledDependencise = dependencyList.map(
     ({ fileName, name }) => `
     {
       fileName: "${fileName}",
@@ -107,8 +143,8 @@ function setViewRender(fileTree, type, dependencyInfo) {
   );
 
   const code = `
-    const modules = [${transpiledFiles.join(",")}];
     const dependencies = [${transpiledDependencise.join(",")}];
+    const modules = [${totalModuleList.join(",")}];
 
     const require = function(file) {
       const dependency = dependencies.find(({ fileName }) => fileName === file);
@@ -131,7 +167,9 @@ function setViewRender(fileTree, type, dependencyInfo) {
       return module.exports;
     };
 
-    modules[0]?.func(require, modules[0].exports);
+    modules.forEach((module) => {
+      module?.func(require, module.exports);
+    });
   `;
 
   const logScript = `

@@ -12,7 +12,6 @@ function createGraph(fileTree, entryFilePath, dependencyInfo) {
 
   while (queue.length > 0) {
     const currentFile = queue.shift();
-
     const dependcy = dependencies.find(
       ({ fileName }) => fileName === currentFile
     );
