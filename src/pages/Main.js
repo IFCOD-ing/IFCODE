@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { AiOutlineFolderAdd, AiOutlineFileAdd } from "react-icons/ai";
-
 import useFileTree from "../hooks/useFileTree";
 import useFileTab from "../hooks/useFileTab";
 import useDependency from "../hooks/useDependency";
 
 import { updateFileContent } from "../helper/searchDfs";
-
 import { setViewRender } from "../helper/setViewRender";
 
 import javascriptSvg from "../assets/images/javascript.svg";
@@ -16,6 +13,7 @@ import reactSvg from "../assets/images/react.svg";
 
 import MainNav from "../components/Main/MainNav";
 import Menu from "../components/Main/Menu";
+import FileMenuSub from "../components/Main/FileMenuSub";
 import MainPane from "../components/Main/MainPane";
 
 import DependencyBox from "../components/Main/DependencyBox";
@@ -170,20 +168,16 @@ function Main() {
         </Menu>
         <Menu
           title="File"
+          titleExtend={
+            <FileMenuSub
+              onFolderAddButtonClick={() => handleFolderAddButtonClick("root")}
+              onFileAddButtonClick={() => handleFileAddButtonClick("root")}
+            />
+          }
           titleSub={
-            <>
-              <div className="title-actions">
-                <AiOutlineFolderAdd
-                  onClick={() => handleFolderAddButtonClick("root")}
-                />
-                <AiOutlineFileAdd
-                  onClick={() => handleFileAddButtonClick("root")}
-                />
-              </div>
-              <button className="run-button" onClick={handleRunButtonClick}>
-                run
-              </button>
-            </>
+            <button className="run-button" onClick={handleRunButtonClick}>
+              run
+            </button>
           }
         >
           <Tree
@@ -284,33 +278,6 @@ const MainWrapper = styled.div`
   display: flex;
   flex: 1 1 0;
   height: 100%;
-
-  .title-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.2s;
-
-    svg {
-      cursor: pointer;
-      margin-left: 10px;
-      transform: scale(1);
-      transition: 0.2s;
-
-      :hover {
-        transform: scale(1.1);
-      }
-    }
-  }
-
-  &:hover .title-actions {
-    opacity: 1;
-    pointer-events: all;
-    transition: 0.2s;
-  }
 
   iframe {
     background-color: white;
