@@ -9,11 +9,11 @@ import { css } from "@codemirror/lang-css";
 
 const Wrapper = styled.div`
   .cm-editor {
-    background-color: #151515;
+    background-color: ${(props) => props.theme.backgroundColor};
   }
 
   .cm-gutters {
-    background-color: #151515;
+    background-color: ${(props) => props.theme.backgroundColor};
   }
 
   .cm-scroller::-webkit-scrollbar {
@@ -37,7 +37,7 @@ function CodeEditor({ file, onContentChange }) {
         className="code-editor"
         value={content}
         width="100%"
-        height="100%"
+        height="87vh"
         extensions={fileType && [extenstionInfo[fileType]]}
         onChange={(value) => onContentChange(value, id)}
         theme="dark"

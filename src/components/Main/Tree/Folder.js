@@ -31,10 +31,10 @@ const FolderWrapper = styled.div`
       transition: 0.2s;
 
       svg {
-        cursor: pointer;
         margin-left: 10px;
         transform: scale(1);
         transition: 0.2s;
+        cursor: pointer;
 
         :hover {
           transform: scale(1.1);

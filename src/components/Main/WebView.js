@@ -1,5 +1,10 @@
 import React, { useRef, useEffect } from "react";
+import styled from "styled-components";
 import PropTypes from "prop-types";
+
+const StyledIframe = styled.iframe`
+  background-color: #fff;
+`;
 
 function WebView({ document, run }) {
   const iframeRef = useRef();
@@ -11,7 +16,7 @@ function WebView({ document, run }) {
   }, [run]);
 
   return (
-    <iframe
+    <StyledIframe
       srcDoc={document}
       title="output"
       sandbox="allow-modals allow-forms allow-popups allow-same-origin allow-scripts"

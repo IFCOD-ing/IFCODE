@@ -10,7 +10,7 @@ const DependencyWrapper = styled.div`
   }
 
   .content-box:hover {
-    background-color: #343434;
+    background-color: ${(props) => props.theme.backgroundColor};
   }
 
   .title {
