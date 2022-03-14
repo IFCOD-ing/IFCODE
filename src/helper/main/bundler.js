@@ -1,7 +1,7 @@
 import { transform } from "@babel/standalone";
 import { customAlphabet } from "nanoid";
 
-import { findFileByPath } from "./searchBfs";
+import { findFileByPath } from "./fileTreeHelper";
 
 function createGraph(fileTree, entryFilePath, dependencyInfo) {
   const files = [];
@@ -39,7 +39,6 @@ function createGraph(fileTree, entryFilePath, dependencyInfo) {
     }
 
     const path = currentFile.split("/");
-
     const content = findFileByPath(fileTree, path);
 
     if (content) {
