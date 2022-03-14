@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
+import javascriptSvg from "../assets/images/javascript.svg";
+import reactSvg from "../assets/images/react.svg";
+
 import useFileTree from "../hooks/useFileTree";
 import useFileTab from "../hooks/useFileTab";
 import useDependency from "../hooks/useDependency";
-
-import javascriptSvg from "../assets/images/javascript.svg";
-import reactSvg from "../assets/images/react.svg";
 
 import { updateFileContent } from "../helper/main/fileTreeHelper";
 import { setViewRender } from "../helper/main/setViewRender";

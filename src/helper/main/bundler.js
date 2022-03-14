@@ -1,6 +1,5 @@
 import { transform } from "@babel/standalone";
 import { customAlphabet } from "nanoid";
-
 import { findFileByPath } from "./fileTreeHelper";
 
 function createGraph(fileTree, entryFilePath, dependencyInfo) {
@@ -12,7 +11,6 @@ function createGraph(fileTree, entryFilePath, dependencyInfo) {
 
   while (queue.length > 0) {
     const currentFile = queue.shift();
-
     const dependcy = dependencies.find(
       ({ fileName }) => fileName === currentFile
     );

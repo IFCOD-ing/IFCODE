@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-import file from "../file.json";
-import react from "../react.json";
+import javascript from "../templeteData/javascript.json";
+import react from "../templeteData/react.json";
 
 import {
   createNodeId,
@@ -31,7 +31,7 @@ function useFileTree(
     let baseFile;
 
     if (templete === "javascript") {
-      baseFile = file;
+      baseFile = javascript;
     }
 
     if (templete === "react") {
