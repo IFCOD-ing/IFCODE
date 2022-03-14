@@ -10,7 +10,7 @@ const PaneContainerBox = styled.div`
   height: 100%;
 
   .splitter {
-    border: 2px solid #343434 !important;
+    border: 2px solid ${(props) => props.theme.mainColor} !important;
   }
 
   .reflex-element::-webkit-scrollbar {
@@ -20,10 +20,10 @@ const PaneContainerBox = styled.div`
 
   .reflex-element::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: #343434;
+    background: ${(props) => props.theme.mainColor};
   }
   .reflex-element::-webkit-scrollbar-track {
-    background: #151515;
+    background: ${(props) => props.theme.backgroundColor};
   }
 `;
 
@@ -40,7 +40,7 @@ function PaneContainer({ children, viewType }) {
 }
 
 PaneContainer.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   viewType: PropTypes.string.isRequired,
 };
 

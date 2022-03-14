@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
 import PropTypes from "prop-types";
 
 import {
@@ -32,10 +31,10 @@ const FolderWrapper = styled.div`
       transition: 0.2s;
 
       svg {
-        cursor: pointer;
         margin-left: 10px;
         transform: scale(1);
         transition: 0.2s;
+        cursor: pointer;
 
         :hover {
           transform: scale(1.1);
@@ -90,7 +89,6 @@ function Folder({
 }
 
 Folder.propTypes = {
-  // id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   children: PropTypes.node,
   onClickFileAddButton: PropTypes.func.isRequired,

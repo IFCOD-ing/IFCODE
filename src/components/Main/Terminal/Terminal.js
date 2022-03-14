@@ -2,26 +2,28 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
+import Button from "../../common/Button";
+
 const TerminalWrapper = styled.div`
+  height: 87vh;
+
   .title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 20px;
-    position: -webkit-sticky; /* for Safari */
     position: sticky;
     top: 0;
     align-self: flex-start;
+    height: 20px;
     padding: 20px;
     background-color: #0fd1c9;
-    /* line-height: 5px; */
     font-size: 20px;
   }
 
   .content {
+    overflow-y: auto;
     padding: 10px;
     color: #fff;
-    overflow-y: auto;
   }
 
   button {
@@ -34,7 +36,7 @@ function Terminal({ title, children, onExtraButtonClick }) {
     <TerminalWrapper>
       <div className="title">
         {title}
-        <button onClick={onExtraButtonClick}>clear</button>
+        <Button type="button" text="clear" onClick={onExtraButtonClick} />
       </div>
       <div className="content">{children}</div>
     </TerminalWrapper>

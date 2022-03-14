@@ -5,8 +5,8 @@ import PropTypes from "prop-types";
 const ContentBox = styled.div`
   width: 100%;
   height: 100%;
-  background-color: #151515;
-  color: white;
+  background-color: ${(props) => props.theme.backgroundColor};
+  color: #fff;
 `;
 
 function ContentContainer({ children }) {

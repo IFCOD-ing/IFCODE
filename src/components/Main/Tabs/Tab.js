@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-
 import PropTypes from "prop-types";
 
 import CloseButton from "../../common/CloseButton";
@@ -10,9 +9,10 @@ const TabWrapper = styled.div`
   justify-content: space-evenly;
   min-width: 120px;
   padding: 0 10px;
-  border-right: 1px solid #343434;
+  border-right: 1px solid ${(props) => props.theme.mainColor};
   border-bottom: ${(props) => (props.isSelected ? "2px solid #0fd1c9" : "")};
-  background-color: ${(props) => (props.isSelected ? "#151515" : "")};
+  background-color: ${(props) =>
+    props.isSelected ? props.theme.backgroundColor : ""};
   line-height: 40px;
   text-align: center;
   font-size: 14px;

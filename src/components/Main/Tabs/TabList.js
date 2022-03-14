@@ -4,11 +4,11 @@ import PropTypes from "prop-types";
 
 const TabListWrapper = styled.div`
   display: flex;
-  height: 40px;
-  border-bottom: 1px solid #343434;
-  overflow-x: auto;
-  background-color: #151515;
   z-index: 1;
+  overflow-x: auto;
+  height: 5vh;
+  border-bottom: 1px solid ${(props) => props.theme.mainColor};
+  background-color: ${(props) => props.theme.backgroundColor};
 
   &::-webkit-scrollbar {
     height: 1px;

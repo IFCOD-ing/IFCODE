@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import _ from "lodash";
 
-function createStructureId(fileStructure) {
+function createNodeId(fileStructure) {
   const cloneFileStructure = _.cloneDeep(fileStructure);
 
   function travelsalTree(data) {
@@ -17,31 +17,10 @@ function createStructureId(fileStructure) {
 
   travelsalTree(cloneFileStructure);
 
-  console.log(cloneFileStructure);
-
   return cloneFileStructure;
 }
 
-function addFileById(file, id, name) {
-  function travelsalTree(data) {
-    if (!data) {
-      return;
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].id === id) {
-        data[i].childrens.push({ type: "file", name, id: nanoid() });
-        return;
-      }
-
-      travelsalTree(data[i].childrens);
-    }
-  }
-
-  travelsalTree(file, id);
-}
-
-function addNewFileById(fileTree, folderId, name, type, action) {
+function addNewFileById(fileTree, folderId, name, type) {
   const cloneFileTree = _.cloneDeep(fileTree);
   let error = "";
 
@@ -229,23 +208,24 @@ function findFileById(fileStructure, id) {
   return file;
 }
 
-function updateFile(fileStructure, id, content) {
-  function travelsalTree(data) {
-    if (!data) {
-      return;
+function findFileByPath(fileTree, path) {
+  const cloneFileTree = _.cloneDeep(fileTree);
+  const clonePath = _.cloneDeep(path);
+
+  const queue = cloneFileTree;
+
+  while (queue.length) {
+    const node = queue.shift();
+
+    if (node.name === clonePath[0] && node.childrens) {
+      clonePath.shift();
+      queue.push(...node.childrens);
     }
 
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].id === id) {
-        data[i].content = content;
-        return;
-      }
-
-      travelsalTree(data[i].childrens, id, content);
+    if (clonePath.length === 1 && node.name === clonePath[0]) {
+      return node.content;
     }
   }
-
-  travelsalTree(fileStructure, id, content);
 }
 
 function updateFileContent(fileTree, id, content) {
@@ -271,38 +251,13 @@ function updateFileContent(fileTree, id, content) {
   return cloneFileTree;
 }
 
-function findRenderFile(fileStructure, name) {
-  let file;
-
-  function travelsalTree(data) {
-    if (!data) {
-      return;
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].name === name) {
-        file = data[i].content;
-        return;
-      }
-
-      travelsalTree(data[i].childrens, name);
-    }
-  }
-
-  travelsalTree(fileStructure, name);
-
-  return file;
-}
-
 export {
-  createStructureId,
-  addFileById,
-  findFileById,
-  updateFile,
-  findRenderFile,
+  createNodeId,
   addNewFileById,
-  updateFileContent,
   editFileOrFolderName,
   delteFileOrFolderName,
   getAllFiles,
+  findFileById,
+  findFileByPath,
+  updateFileContent,
 };

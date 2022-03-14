@@ -7,15 +7,13 @@ import { javascript } from "@codemirror/lang-javascript";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 
-// javascript({ jsx: true })
-
 const Wrapper = styled.div`
   .cm-editor {
-    background-color: #151515;
+    background-color: ${(props) => props.theme.backgroundColor};
   }
 
   .cm-gutters {
-    background-color: #151515;
+    background-color: ${(props) => props.theme.backgroundColor};
   }
 
   .cm-scroller::-webkit-scrollbar {
@@ -39,7 +37,7 @@ function CodeEditor({ file, onContentChange }) {
         className="code-editor"
         value={content}
         width="100%"
-        height="100%"
+        height="87vh"
         extensions={fileType && [extenstionInfo[fileType]]}
         onChange={(value) => onContentChange(value, id)}
         theme="dark"
@@ -50,7 +48,7 @@ function CodeEditor({ file, onContentChange }) {
 
 CodeEditor.propTypes = {
   file: PropTypes.object.isRequired,
-  onContentChange: PropTypes.func,
+  onContentChange: PropTypes.func.isRequired,
 };
 
 export default CodeEditor;

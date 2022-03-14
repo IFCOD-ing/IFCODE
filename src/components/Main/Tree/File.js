@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-
 import PropTypes from "prop-types";
 
 import { AiOutlineFile, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
@@ -37,9 +36,9 @@ function File({
 }
 
 const FileWrapper = styled.div`
-  padding-left: 20px;
   display: flex;
   align-items: center;
+  padding-left: 20px;
 
   .file {
     margin-left: 5px;
@@ -56,10 +55,10 @@ const FileWrapper = styled.div`
     transition: 0.2s;
 
     svg {
-      cursor: pointer;
       margin-left: 10px;
       transform: scale(1);
       transition: 0.2s;
+      cursor: pointer;
 
       :hover {
         transform: scale(1.1);

@@ -1,6 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const DependencyWrapper = styled.div`
   .content-box {
@@ -10,7 +10,7 @@ const DependencyWrapper = styled.div`
   }
 
   .content-box:hover {
-    background-color: #343434;
+    background-color: ${(props) => props.theme.backgroundColor};
   }
 
   .title {

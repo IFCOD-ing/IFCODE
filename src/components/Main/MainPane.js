@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 const MainPaneWrapper = styled.div`
   width: 100%;
-  background-color: #151515;
+  background-color: ${(props) => props.theme.backgroundColor};
 `;
 
 function MainPane({ children }) {

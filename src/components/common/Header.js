@@ -4,8 +4,8 @@ import styled from "styled-components";
 const HeaderWrapper = styled.div`
   width: 100%;
   height: 7vh;
-  background-color: #151515;
-  border-bottom: 5px solid #343434;
+  border-bottom: 5px solid ${(props) => props.theme.mainColor};
+  background-color: ${(props) => props.theme.backgroundColor};
   color: #ffffff;
 
   .title {

@@ -1,15 +1,14 @@
 import React from "react";
 import styled from "styled-components";
-
 import PropTypes from "prop-types";
 
 const NavWrapper = styled.div`
+  overflow-y: auto;
   min-width: 300px;
   height: 93vh;
-  background-color: #151515;
-  border-right: 5px solid #343434;
+  border-right: 5px solid ${(props) => props.theme.mainColor};
+  background-color: ${(props) => props.theme.backgroundColor};
   color: white;
-  overflow-y: auto;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -17,10 +16,10 @@ const NavWrapper = styled.div`
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: #343434;
+    background: ${(props) => props.theme.mainColor};
   }
   &::-webkit-scrollbar-track {
-    background: #151515;
+    background: ${(props) => props.theme.backgroundColor};
   }
 `;
 

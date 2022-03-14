@@ -1,13 +1,14 @@
 import React from "react";
-
-import PropTypes from "prop-types";
 import styled from "styled-components";
+import PropTypes from "prop-types";
+
+import Button from "../common/Button";
 
 const FileFormWrapper = styled.div`
   display: ${(props) => (props.isDisplay ? undefined : "none")};
   height: 120px;
-  border-top: 1px solid #343434;
-  border-bottom: 1px solid #343434;
+  border-top: 1px solid ${(props) => props.theme.mainColor};
+  border-bottom: 1px solid ${(props) => props.theme.mainColor};
 
   .input-form {
     text-align: center;
@@ -18,7 +19,7 @@ const FileFormWrapper = styled.div`
       border-left: none;
       border-right: none;
       border-bottom: 2px solid #0fd1c9;
-      background-color: #151515;
+      background-color: ${(props) => props.theme.backgroundColor};
       color: #fff;
     }
 
@@ -53,10 +54,8 @@ function FileForm({
       <form className="input-form" onSubmit={onSubmitFile}>
         <input name="fileName" placeholder={placeholderText} />
         <div>
-          <button type="button" onClick={onCancel}>
-            취소
-          </button>
-          <button type="submit">생성</button>
+          <Button type="button" text="취소" onClick={onCancel} />
+          <Button type="submit" text="생성" />
         </div>
         <p>{errorMessage}</p>
       </form>

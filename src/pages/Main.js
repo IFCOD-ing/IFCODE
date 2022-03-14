@@ -1,31 +1,23 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import file from "../file.json";
-import react from "../react.json";
-
-import { AiOutlineFolderAdd, AiOutlineFileAdd } from "react-icons/ai";
-
-import {
-  findFileById,
-  createStructureId,
-  addNewFileById,
-  updateFileContent,
-  editFileOrFolderName,
-  delteFileOrFolderName,
-  getAllFiles,
-} from "../helper/searchDfs";
-
-import { setViewRender } from "../helper/setViewRender";
-
-import { validationInputText } from "../helper/validate";
+import useFileTree from "../hooks/useFileTree";
+import useFileTab from "../hooks/useFileTab";
+import useDependency from "../hooks/useDependency";
 
 import javascriptSvg from "../assets/images/javascript.svg";
 import reactSvg from "../assets/images/react.svg";
 
+import { updateFileContent } from "../helper/main/fileTreeHelper";
+import { setViewRender } from "../helper/main/setViewRender";
+
+import Button from "../components/common/Button";
+
 import MainNav from "../components/Main/MainNav";
 import Menu from "../components/Main/Menu";
+import FileMenuSub from "../components/Main/FileMenuSub";
 import MainPane from "../components/Main/MainPane";
+import TempleteBox from "../components/Main/TempleteBox";
 
 import DependencyBox from "../components/Main/DependencyBox";
 
@@ -46,61 +38,55 @@ import Log from "../components/Main/Terminal/Log";
 import CloseButton from "../components/common/CloseButton";
 
 function Main() {
-  // templete type
-  const [templete, setTemplete] = useState("javascript");
-
-  // 파일 구조 레더링
   const [fileTree, setFileTree] = useState([]);
-
-  // 탭에 파일 추가
-  const [fileTabInfo, setFileTabInfo] = useState({});
-  const [selectedFile, setSelectedFile] = useState({});
-
-  // fireform
-  const [isFileFormShow, setIsFileFormShow] = useState(false);
-  const [updateFolderId, setUpdateFolderId] = useState({});
-
-  // dependency form
-  const [isDependencyFormShow, setIsDependencyFormShow] = useState(false);
-  const [dependencyFormErrorMessage, setDependencyFormErrorMessage] =
-    useState("");
-
-  // dependency List
-  const [dependencyInfo, setDependencyInfo] = useState({});
-
-  // inputCode
   const [inputCode, setInputCode] = useState(null);
-
-  // 실행
   const [runCount, setRunCount] = useState(0);
   const [srcDoc, setSrcDoc] = useState(``);
-
-  // log
   const [logList, setLogList] = useState([]);
 
-  // fileForm 에러 메세지
-  const [errorMessage, setErrorMessage] = useState("");
+  const {
+    fileTabInfo,
+    selectedFile,
+    setFileTabInfo,
+    setSelectedFile,
+    handleFileClick,
+    handleTabClick,
+    handleCloseTab,
+  } = useFileTab(fileTree);
 
-  // 템플릿 파잁 트리 변경
-  useEffect(() => {
-    let baseFile;
+  const {
+    templete,
+    isFileFormShow,
+    errorMessage,
+    setTemplete,
+    handleFileAddButtonClick,
+    handleFolderAddButtonClick,
+    handleFileFormSubmit,
+    handleCancelFileButtonClick,
+    handleFileEditButtonClick,
+    handleFolderEditButtonClick,
+    handleFileDeleteButtonClick,
+    handleFolderDeleteButtonClick,
+  } = useFileTree(
+    fileTree,
+    setFileTree,
+    setFileTabInfo,
+    setSelectedFile,
+    setSrcDoc,
+    fileTabInfo,
+    handleCloseTab
+  );
 
-    if (templete === "javascript") {
-      baseFile = file;
-    }
+  const {
+    dependencyInfo,
+    isDependencyFormShow,
+    dependencyFormErrorMessage,
+    handleDependencyAddButtonClick,
+    handleDependencyFormCancelButtonClick,
+    addNewDependency,
+    handleDependencyDeleteButtonClick,
+  } = useDependency();
 
-    if (templete === "react") {
-      baseFile = react;
-    }
-
-    const fileInfo = createStructureId(baseFile);
-    setFileTree(fileInfo);
-    setFileTabInfo({});
-    setSelectedFile({});
-    setSrcDoc(``);
-  }, [templete]);
-
-  // 사용자가 코드 입력시 해당 코드 상태 저장
   useEffect(() => {
     if (inputCode === null || inputCode === "") {
       return;
@@ -123,7 +109,7 @@ function Main() {
       javascript: {
         templete: "javascript",
         htmlPath: "index.html",
-        entryPointPath: "src/index.js",
+        entryPointPath: "",
       },
       react: {
         templete: "react",
@@ -151,189 +137,14 @@ function Main() {
     };
   }, []);
 
-  // 실행 버튼 클릭
   function handleRunButtonClick() {
     setRunCount(runCount + 1);
   }
 
-  // 파일 클릭시 탭에 추가
-  function handleFileClick(id) {
-    const clickedFileInfo = findFileById(fileTree, id);
-
-    setFileTabInfo({ ...fileTabInfo, [id]: clickedFileInfo });
-    setSelectedFile(clickedFileInfo);
-  }
-
-  // 폴더에서 파일 추가 버튼 클릭시 file form show
-  function handleFileAddButtonClick(folderId) {
-    setIsFileFormShow(true);
-    setUpdateFolderId({ type: "file", id: folderId, action: "new" });
-  }
-
-  // 폴더 추가
-  function handleFolderAddButtonClick(folderId) {
-    setIsFileFormShow(true);
-    setUpdateFolderId({ type: "folder", id: folderId, action: "new" });
-  }
-
-  // 파일 이름 수정
-  function handleFileEditButtonClick(fileId) {
-    setIsFileFormShow(true);
-    setUpdateFolderId({ type: "file", id: fileId, action: "edit" });
-  }
-
-  // 폴더 이름 수정
-  function handleFolderEditButtonClick(fileId) {
-    setIsFileFormShow(true);
-    setUpdateFolderId({ type: "folder", id: fileId, action: "edit" });
-  }
-
-  // 파일 삭제
-  function handleFileDeleteButtonClick(fileId) {
-    const { updatedFileTree } = delteFileOrFolderName(fileTree, fileId);
-
-    setFileTree(updatedFileTree);
-    handleCloseTab(fileId);
-  }
-
-  // root file 생성
-
-  // 폴더 삭제
-  function handleFolderDeleteButtonClick(folderId) {
-    const { updatedFileTree, removedFolder } = delteFileOrFolderName(
-      fileTree,
-      folderId
-    );
-
-    const childrenFiles = getAllFiles(removedFolder);
-
-    childrenFiles.forEach((value) => {
-      delete fileTabInfo[value];
-    });
-
-    setFileTree(updatedFileTree);
-    setFileTabInfo(fileTabInfo);
-  }
-
-  // file from 취소 버튼 클릭
-  function handleCancelFileButtonClick() {
-    setIsFileFormShow(false);
-  }
-
-  // file sumbit 파일 생성 버튼 클릭
-  function addNewFile(event) {
-    event.preventDefault();
-    const fileName = event.target.fileName.value;
-
-    const validationResult = validationInputText(fileName, updateFolderId.type);
-
-    if (validationResult) {
-      setErrorMessage(validationResult);
-      event.target.fileName.value = "";
-      return;
-    }
-
-    let result;
-
-    if (updateFolderId.action === "edit") {
-      result = editFileOrFolderName(fileTree, updateFolderId.id, fileName);
-      handleCloseTab(updateFolderId.id);
-    }
-
-    if (updateFolderId.action === "new") {
-      result = addNewFileById(
-        fileTree,
-        updateFolderId.id,
-        fileName,
-        updateFolderId.type,
-        updateFolderId.action
-      );
-    }
-
-    if (updateFolderId.action === "delete") {
-      result = delteFileOrFolderName(fileTree, updateFolderId.id);
-    }
-
-    const newFileTree = result;
-
-    if (typeof newFileTree === "string") {
-      setErrorMessage(newFileTree);
-      event.target.fileName.value = "";
-      return;
-    }
-
-    setFileTree(newFileTree);
-    setIsFileFormShow(false);
-    setUpdateFolderId("");
-
-    event.target.fileName.value = "";
-  }
-
-  // 디펜던기 form show
-  function handleDependencyAddButtonClick() {
-    setIsDependencyFormShow(true);
-  }
-
-  // 디펜던시 취소
-  function handleDependencyFormCancelButtonClick() {
-    setIsDependencyFormShow(false);
-  }
-
-  // 디펜던시 추가 버튼
-  function addNewDependency(event) {
-    event.preventDefault();
-    const dependency = event.target.fileName.value;
-
-    const dependencyName = dependency.slice(dependency.indexOf(".dev/") + 5);
-
-    if (dependencyInfo[dependencyName]) {
-      setDependencyFormErrorMessage("이미 등록된 디펜던시 입니다.");
-      event.target.fileName.value = "";
-      return;
-    }
-
-    setDependencyInfo({ ...dependencyInfo, [dependencyName]: dependency });
-    event.target.fileName.value = "";
-  }
-
-  function handleDependencyDeleteButtonClick(dependency) {
-    delete dependencyInfo[dependency];
-    setDependencyInfo({ ...dependencyInfo });
-  }
-
-  // 탭 클릭 파일 내용 변환
-  function handleTabClick(fileId) {
-    const selectedFile = findFileById(fileTree, fileId);
-    setSelectedFile(selectedFile);
-  }
-
-  // 탭 삭제
-  function handleCloseTab(fileId) {
-    delete fileTabInfo[fileId];
-
-    if (selectedFile.id === fileId) {
-      const fileTabList = Object.keys(fileTabInfo);
-
-      if (!fileTabList.length) {
-        setSelectedFile({});
-        return;
-      }
-
-      const lastTabInfoKey = fileTabList[fileTabList.length - 1];
-      const clickedFileInfo = findFileById(fileTree, lastTabInfoKey);
-
-      setSelectedFile(clickedFileInfo);
-    }
-
-    setFileTabInfo({ ...fileTabInfo });
-  }
-
-  // 파일내 content 변경 반영
-  function handleChangeCode(value, id) {
+  function handleChangeCode(value) {
     setInputCode(value);
   }
 
-  // log 기록 초기화
   function handleClearButtonClick() {
     setLogList([]);
   }
@@ -346,7 +157,6 @@ function Main() {
     setTemplete("react");
   }
 
-  // 객체 트리구조 배열로 변환
   const fileTabInfoList = Object.entries(fileTabInfo);
   const dependencyInfoList = Object.keys(dependencyInfo);
 
@@ -354,27 +164,21 @@ function Main() {
     <MainWrapper>
       <MainNav>
         <Menu title="Templete">
-          <div>
+          <TempleteBox>
             <img src={javascriptSvg} onClick={handleJavscriptClick}></img>
             <img src={reactSvg} onClick={handleReactClick}></img>
-          </div>
+          </TempleteBox>
         </Menu>
         <Menu
           title="File"
+          titleExtend={
+            <FileMenuSub
+              onFolderAddButtonClick={() => handleFolderAddButtonClick("root")}
+              onFileAddButtonClick={() => handleFileAddButtonClick("root")}
+            />
+          }
           titleSub={
-            <>
-              <div className="title-actions">
-                <AiOutlineFolderAdd
-                  onClick={() => handleFolderAddButtonClick("root")}
-                />
-                <AiOutlineFileAdd
-                  onClick={() => handleFileAddButtonClick("root")}
-                />
-              </div>
-              <button className="run-button" onClick={handleRunButtonClick}>
-                run
-              </button>
-            </>
+            <Button type="button" text="run" onClick={handleRunButtonClick} />
           }
         >
           <Tree
@@ -389,7 +193,7 @@ function Main() {
           />
           <FileForm
             isShow={isFileFormShow}
-            onSubmitFile={addNewFile}
+            onSubmitFile={handleFileFormSubmit}
             onCancel={handleCancelFileButtonClick}
             errorMessage={errorMessage}
             placeholderText="input file or folder name"
@@ -398,12 +202,11 @@ function Main() {
         <Menu
           title="dependency"
           titleSub={
-            <button
-              className="add-button"
+            <Button
+              type="button"
+              text="add"
               onClick={handleDependencyAddButtonClick}
-            >
-              add
-            </button>
+            />
           }
         >
           <FileForm
@@ -476,45 +279,8 @@ const MainWrapper = styled.div`
   flex: 1 1 0;
   height: 100%;
 
-  .title-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.2s;
-
-    svg {
-      cursor: pointer;
-      margin-left: 10px;
-      transform: scale(1);
-      transition: 0.2s;
-
-      :hover {
-        transform: scale(1.1);
-      }
-    }
-  }
-
-  &:hover .title-actions {
-    opacity: 1;
-    pointer-events: all;
-    transition: 0.2s;
-  }
-
-  iframe {
-    background-color: white;
-  }
-
   .dependency-wrapper {
     padding: 0 10px;
-  }
-
-  .view {
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
   }
 `;
 
