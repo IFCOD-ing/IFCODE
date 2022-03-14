@@ -31,6 +31,8 @@ function CodeEditor({ file, onContentChange }) {
     css: css(),
   };
 
+  const currentExtension = extenstionInfo[fileType];
+
   return (
     <Wrapper>
       <CodeMirror
@@ -38,7 +40,7 @@ function CodeEditor({ file, onContentChange }) {
         value={content}
         width="100%"
         height="87vh"
-        extensions={fileType && [extenstionInfo[fileType]]}
+        extensions={currentExtension}
         onChange={(value) => onContentChange(value, id)}
         theme="dark"
       />
