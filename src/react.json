@@ -1,0 +1,18 @@
+[
+  {
+    "type": "folder",
+    "name": "public",
+    "childrens": [
+      { "type": "file", "name": "index.html", "content": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset='utf-8'>\n  <meta name='viewport' content='width=device-width'>\n  <title>IF(CODE)</title>\n </head>\n<body>\n  <div id='root'></div>\n</body>\n</html>" }
+    ]
+  },
+  {
+    "type": "folder",
+    "name": "src",
+    "childrens": [
+      { "type": "file", "name": "App.js", "content": "" },
+      { "type": "file", "name": "index.js", "content": "" },
+      { "type": "file", "name": "styles.css", "content": "" }
+    ]
+  }
+]
