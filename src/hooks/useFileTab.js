@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { findFileById } from "../helper/searchDfs";
+import { findFileById } from "../helper/main/fileTreeHelper";
 
 function useFileTab(fileTree) {
   const [fileTabInfo, setFileTabInfo] = useState({});

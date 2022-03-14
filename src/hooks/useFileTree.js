@@ -4,13 +4,13 @@ import file from "../file.json";
 import react from "../react.json";
 
 import {
-  createStructureId,
+  createNodeId,
   addNewFileById,
   editFileOrFolderName,
   delteFileOrFolderName,
   getAllFiles,
-} from "../helper/searchDfs";
-import { validationInputText } from "../helper/validate";
+} from "../helper/main/fileTreeHelper";
+import { validationInputText } from "../helper/main/validate";
 
 function useFileTree(
   fileTree,
@@ -38,7 +38,7 @@ function useFileTree(
       baseFile = react;
     }
 
-    setFileTree(createStructureId(baseFile));
+    setFileTree(createNodeId(baseFile));
     setFileTabInfo({});
     setSelectedFile({});
     setSrcDoc(``);
@@ -93,13 +93,14 @@ function useFileTree(
 
   function handleFileFormSubmit(event) {
     event.preventDefault();
-    const fileName = event.target.fileName.value;
 
+    const fileName = event.target.fileName.value;
     const validationResult = validationInputText(fileName, updateNodeInfo.type);
 
     if (validationResult) {
       setErrorMessage(validationResult);
       event.target.fileName.value = "";
+
       return;
     }
 

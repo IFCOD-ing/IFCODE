@@ -17,8 +17,8 @@ function useDependency() {
 
   function addNewDependency(event) {
     event.preventDefault();
-    const dependency = event.target.fileName.value;
 
+    const dependency = event.target.fileName.value;
     const dependencyName = dependency.slice(dependency.indexOf(".dev/") + 5);
 
     if (dependencyInfo[dependencyName]) {
