@@ -5,16 +5,19 @@ import useFileTree from "../hooks/useFileTree";
 import useFileTab from "../hooks/useFileTab";
 import useDependency from "../hooks/useDependency";
 
+import javascriptSvg from "../assets/images/javascript.svg";
+import reactSvg from "../assets/images/react.svg";
+
 import { updateFileContent } from "../helper/searchDfs";
 import { setViewRender } from "../helper/setViewRender";
 
-import javascriptSvg from "../assets/images/javascript.svg";
-import reactSvg from "../assets/images/react.svg";
+import Button from "../components/common/Button";
 
 import MainNav from "../components/Main/MainNav";
 import Menu from "../components/Main/Menu";
 import FileMenuSub from "../components/Main/FileMenuSub";
 import MainPane from "../components/Main/MainPane";
+import TempleteBox from "../components/Main/TempleteBox";
 
 import DependencyBox from "../components/Main/DependencyBox";
 
@@ -161,10 +164,10 @@ function Main() {
     <MainWrapper>
       <MainNav>
         <Menu title="Templete">
-          <div>
+          <TempleteBox>
             <img src={javascriptSvg} onClick={handleJavscriptClick}></img>
             <img src={reactSvg} onClick={handleReactClick}></img>
-          </div>
+          </TempleteBox>
         </Menu>
         <Menu
           title="File"
@@ -175,9 +178,7 @@ function Main() {
             />
           }
           titleSub={
-            <button className="run-button" onClick={handleRunButtonClick}>
-              run
-            </button>
+            <Button type="button" text="run" onClick={handleRunButtonClick} />
           }
         >
           <Tree
@@ -201,12 +202,11 @@ function Main() {
         <Menu
           title="dependency"
           titleSub={
-            <button
-              className="add-button"
+            <Button
+              type="button"
+              text="add"
               onClick={handleDependencyAddButtonClick}
-            >
-              add
-            </button>
+            />
           }
         >
           <FileForm
@@ -279,18 +279,8 @@ const MainWrapper = styled.div`
   flex: 1 1 0;
   height: 100%;
 
-  iframe {
-    background-color: white;
-  }
-
   .dependency-wrapper {
     padding: 0 10px;
-  }
-
-  .view {
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
   }
 `;
 
