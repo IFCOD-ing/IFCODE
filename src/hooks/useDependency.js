@@ -35,6 +35,7 @@ function useDependency(templete) {
 
   function handleDependencyFormCancelButtonClick() {
     setIsDependencyFormShow(false);
+    setDependencyFormErrorMessage("");
   }
 
   function addNewDependency(event) {
