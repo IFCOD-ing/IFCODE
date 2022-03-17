@@ -215,6 +215,8 @@ function findFileByPath(fileTree, path) {
 
   const queue = cloneFileTree;
 
+  let result = "file is not find";
+
   while (queue.length) {
     const node = queue.shift();
 
@@ -224,9 +226,11 @@ function findFileByPath(fileTree, path) {
     }
 
     if (clonePath.length === 1 && node.name === clonePath[0]) {
-      return node.content;
+      result = node.content;
     }
   }
+
+  return result;
 }
 
 function updateFileContent(fileTree, id, content) {
