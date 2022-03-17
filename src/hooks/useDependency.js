@@ -1,11 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function useDependency() {
+const dependencyLibraryInfo = {
+  react: {
+    react: "https://cdn.skypack.dev/react",
+    "react-dom": "https://cdn.skypack.dev/react-dom",
+    "styled-components": "https://cdn.skypack.dev/styled-components",
+  },
+  javascript: {},
+  redux: {
+    react: "https://cdn.skypack.dev/react",
+    "react-dom": "https://cdn.skypack.dev/react-dom",
+    "styled-components": "https://cdn.skypack.dev/styled-components",
+    "@reduxjs/toolkit": "https://cdn.skypack.dev/@reduxjs/toolkit",
+    "react-redux": "https://cdn.skypack.dev/react-redux",
+  },
+};
+
+function useDependency(templete) {
   const [isDependencyFormShow, setIsDependencyFormShow] = useState(false);
   const [dependencyFormErrorMessage, setDependencyFormErrorMessage] =
     useState("");
 
   const [dependencyInfo, setDependencyInfo] = useState({});
+
+  useEffect(() => {
+    const templeteType = templete.split(" ")[0];
+
+    setDependencyInfo(dependencyLibraryInfo[templeteType]);
+  }, [templete]);
 
   function handleDependencyAddButtonClick() {
     setIsDependencyFormShow(true);

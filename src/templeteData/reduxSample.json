@@ -1,0 +1,39 @@
+[
+  {
+    "type": "folder",
+    "name": "public",
+    "childrens": [
+      { "type": "file", "name": "index.html", "content": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset='utf-8'>\n  <meta name='viewport' content='width=device-width'>\n  <title>IF(CODE)</title>\n </head>\n<body>\n  <div id='root'></div>\n</body>\n</html>" }
+    ]
+  },
+  {
+    "type": "folder",
+    "name": "src",
+    "childrens": [
+      {
+        "type": "folder",
+        "name": "app",
+        "childrens": [
+          { "type": "file", "name": "store.js", "content": "import { configureStore } from '@reduxjs/toolkit';\nimport counterReducer from 'src/features/counter/counterSlice.js';\n\nexport default configureStore({\n  reducer: {\n    counter: counterReducer\n  }\n});\n" }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "features",
+        "childrens": [
+          {
+            "type": "folder",
+            "name": "counter",
+            "childrens": [
+              { "type": "file", "name": "Counter.js", "content": "import React, { useState } from 'react';\nimport { useSelector, useDispatch } from 'react-redux';\nimport styled from 'styled-components';\nimport {\n  decrement,\n  increment,\n  incrementByAmount,\n  incrementAsync,\n  selectCount\n} from 'src/features/counter/counterSlice.js';\n\nconst CounterWrapper = styled.div`\n  .row {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  .row:not(:last-child) {\n    margin-bottom: 16px;\n  }\n\n  .value {\n    font-size: 78px;\n    padding-left: 16px;\n    padding-right: 16px;\n    margin-top: 2px;\n    font-family: 'Courier New', Courier, monospace;\n  }\n\n  .button {\n    appearance: none;\n    border: none;\n    background: none;\n    font-size: 32px;\n    padding-left: 12px;\n    padding-right: 12px;\n    outline: none;\n    border: 2px solid transparent;\n    color: rgb(112, 76, 182);\n    padding-bottom: 4px;\n    cursor: pointer;\n    background-color: rgba(112, 76, 182, 0.1);\n    border-radius: 2px;\n    transition: all 0.15s;\n  }\n\n  .textbox {\n    font-size: 32px;\n    padding: 2px;\n    width: 64px;\n    text-align: center;\n    margin-right: 8px;\n  }\n\n  .button:hover,\n  .button:focus {\n    border: 2px solid rgba(112, 76, 182, 0.4);\n  }\n\n  .button:active {\n    background-color: rgba(112, 76, 182, 0.2);\n  }\n`;\n\nexport function Counter() {\n  const count = useSelector(selectCount);\n  const dispatch = useDispatch();\n  const [incrementAmount, setIncrementAmount] = useState('2');\n\n  return (\n    <CounterWrapper>\n      <div className='row'>\n        <button\n          className='button'\n          aria-label='Increment value'\n          onClick={() => dispatch(increment())}\n        >\n          +\n        </button>\n        <span className='value'>{count}</span>\n        <button\n          className='button'\n          aria-label='Decrement value'\n          onClick={() => dispatch(decrement())}\n        >\n          -\n        </button>\n      </div>\n      <div className='row'>\n        <input\n          className='textbox'\n          aria-label='Set increment amount'\n          value={incrementAmount}\n          onChange={(e) => setIncrementAmount(e.target.value)}\n        />\n        <button\n          className='button'\n          onClick={() =>\n            dispatch(incrementByAmount(Number(incrementAmount) || 0))\n          }\n        >\n          Add Amount\n        </button>\n        <button\n          className='button'\n          onClick={() => dispatch(incrementAsync(Number(incrementAmount) || 0))}\n        >\n          Add Async\n        </button>\n      </div>\n    </CounterWrapper>\n  );\n}\n" },
+              { "type": "file", "name": "counterSlice.js", "content": "import { createSlice } from '@reduxjs/toolkit';\n\nexport const counterSlice = createSlice({\n  name: 'counter',\n  initialState: {\n    value: 0\n  },\n  reducers: {\n    increment: (state) => {\n      state.value += 1;\n    },\n    decrement: (state) => {\n      state.value -= 1;\n    },\n    incrementByAmount: (state, action) => {\n      state.value += action.payload;\n    }\n  }\n});\n\nexport const { increment, decrement, incrementByAmount } = counterSlice.actions;\n\nexport const incrementAsync = (amount) => (dispatch) => {\n  setTimeout(() => {\n    dispatch(incrementByAmount(amount));\n  }, 1000);\n};\n\nexport const selectCount = (state) => state.counter.value;\n\nexport default counterSlice.reducer;\n" }
+            ]
+          }
+        ]
+      },
+      { "type": "file", "name": "App.js", "content": "import React from 'react';\nimport { Counter } from 'src/features/counter/Counter.js';\n\nfunction App() {\n  return (\n    <div>\n      <header>\n        <Counter />\n      </header>\n    </div>\n  );\n}\n\nexport default App;\n" },
+      { "type": "file", "name": "index.js", "content": "import React from 'react';\nimport ReactDOM from 'react-dom';\nimport App from 'src/App.js';\nimport store from 'src/app/store.js';\nimport { Provider } from 'react-redux';\n\nReactDOM.render(\n  <Provider store={store}>\n    <App />\n  </Provider>,\n  document.getElementById('root')\n);\n" },
+      { "type": "file", "name": "styles.css", "content": "" }
+    ]
+  }
+]

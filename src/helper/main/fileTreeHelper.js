@@ -138,6 +138,7 @@ function editFileOrFolderName(fileTree, id, editedName) {
 function delteFileOrFolderName(fileTree, id) {
   const cloneFileTree = _.cloneDeep(fileTree);
   let error = "";
+  let removedFolder;
 
   function travelsalTree(data, id) {
     if (!data) {
@@ -146,15 +147,15 @@ function delteFileOrFolderName(fileTree, id) {
 
     for (let i = 0; i < data.length; i++) {
       if (data[i].id === id) {
-        const removedFolder = data.splice(i, 1);
-        return removedFolder;
+        removedFolder = data.splice(i, 1);
+        return;
       }
 
       travelsalTree(data[i].childrens, id);
     }
   }
 
-  const removedFolder = travelsalTree(cloneFileTree, id);
+  travelsalTree(cloneFileTree, id);
 
   if (error) {
     return error;
