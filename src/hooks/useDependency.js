@@ -26,7 +26,7 @@ function useDependency(templete) {
   useEffect(() => {
     const templeteType = templete.split(" ")[0];
 
-    setDependencyInfo(dependencyLibraryInfo[templeteType]);
+    setDependencyInfo({ ...dependencyLibraryInfo[templeteType] });
   }, [templete]);
 
   function handleDependencyAddButtonClick() {
