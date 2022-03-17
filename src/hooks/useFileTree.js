@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 
 import javascript from "../templeteData/javascript.json";
 import react from "../templeteData/react.json";
+import reactSample from "../templeteData/reactSample.json";
+import redux from "../templeteData/redux.json";
+import reduxSample from "../templeteData/reduxSample.json";
 
 import {
   createNodeId,
@@ -30,12 +33,24 @@ function useFileTree(
   useEffect(() => {
     let baseFile;
 
-    if (templete === "javascript") {
+    if (templete === "javascript" || templete === "javascript sample") {
       baseFile = javascript;
     }
 
     if (templete === "react") {
       baseFile = react;
+    }
+
+    if (templete === "redux") {
+      baseFile = redux;
+    }
+
+    if (templete === "react sample") {
+      baseFile = reactSample;
+    }
+
+    if (templete === "redux sample") {
+      baseFile = reduxSample;
     }
 
     setFileTree(createNodeId(baseFile));
@@ -85,10 +100,12 @@ function useFileTree(
 
     setFileTree(updatedFileTree);
     setFileTabInfo(fileTabInfo);
+    setSelectedFile({});
   }
 
   function handleCancelFileButtonClick() {
     setIsFileFormShow(false);
+    setErrorMessage("");
   }
 
   function handleFileFormSubmit(event) {

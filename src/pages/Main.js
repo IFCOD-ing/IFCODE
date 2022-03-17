@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import javascriptSvg from "../assets/images/javascript.svg";
 import reactSvg from "../assets/images/react.svg";
+import reduxSvg from "../assets/images/redux.svg";
 
 import useFileTree from "../hooks/useFileTree";
 import useFileTab from "../hooks/useFileTab";
@@ -85,7 +86,7 @@ function Main() {
     handleDependencyFormCancelButtonClick,
     addNewDependency,
     handleDependencyDeleteButtonClick,
-  } = useDependency();
+  } = useDependency(templete);
 
   useEffect(() => {
     if (inputCode === null || inputCode === "") {
@@ -116,9 +117,20 @@ function Main() {
         htmlPath: "public/index.html",
         entryPointPath: "src/index.js",
       },
+      redux: {
+        templete: "redux",
+        htmlPath: "public/index.html",
+        entryPointPath: "src/index.js",
+      },
     };
 
-    const doc = setViewRender(fileTree, viewOption[templete], dependencyInfo);
+    const templeteType = templete.split(" ")[0];
+
+    const doc = setViewRender(
+      fileTree,
+      viewOption[templeteType],
+      dependencyInfo
+    );
 
     setSrcDoc(doc);
   }, [runCount]);
@@ -136,6 +148,12 @@ function Main() {
       window.removeEventListener("message", displayLogMessage);
     };
   }, []);
+
+  function handleSampleButtonClick() {
+    const templeteType = templete.split(" ")[0];
+
+    setTemplete(`${templeteType} sample`);
+  }
 
   function handleRunButtonClick() {
     setRunCount(runCount + 1);
@@ -157,16 +175,30 @@ function Main() {
     setTemplete("react");
   }
 
+  function handleReduxClick() {
+    setTemplete("redux");
+  }
+
   const fileTabInfoList = Object.entries(fileTabInfo);
   const dependencyInfoList = Object.keys(dependencyInfo);
 
   return (
     <MainWrapper>
       <MainNav>
-        <Menu title="Templete">
+        <Menu
+          title="Templete"
+          titleSub={
+            <Button
+              type="button"
+              text="sample"
+              onClick={handleSampleButtonClick}
+            />
+          }
+        >
           <TempleteBox>
             <img src={javascriptSvg} onClick={handleJavscriptClick}></img>
             <img src={reactSvg} onClick={handleReactClick}></img>
+            <img src={reduxSvg} onClick={handleReduxClick}></img>
           </TempleteBox>
         </Menu>
         <Menu

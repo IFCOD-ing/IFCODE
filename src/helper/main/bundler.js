@@ -39,12 +39,10 @@ function createGraph(fileTree, entryFilePath, dependencyInfo) {
     const path = currentFile.split("/");
     const content = findFileByPath(fileTree, path);
 
-    if (content) {
-      files.push({
-        fileName: currentFile,
-        content,
-      });
-    }
+    files.push({
+      fileName: currentFile,
+      content,
+    });
 
     try {
       transform(content, {

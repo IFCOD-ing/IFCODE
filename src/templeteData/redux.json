@@ -1,0 +1,30 @@
+[
+  {
+    "type": "folder",
+    "name": "public",
+    "childrens": [
+      { "type": "file", "name": "index.html", "content": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset='utf-8'>\n  <meta name='viewport' content='width=device-width'>\n  <title>IF(CODE)</title>\n </head>\n<body>\n  <div id='root'></div>\n</body>\n</html>" }
+    ]
+  },
+  {
+    "type": "folder",
+    "name": "src",
+    "childrens": [
+      {
+        "type": "folder",
+        "name": "app",
+        "childrens": [
+          { "type": "file", "name": "store.js", "content": "import { configureStore } from '@reduxjs/toolkit';\nexport default configureStore({);\n" }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "features",
+        "childrens": []
+      },
+      { "type": "file", "name": "App.js", "content": "import React from 'react';\nfunction App() {\n  return (\n    <div>\n      <h1>redux</h1>   \n    </div>\n  );\n}\n\nexport default App;\n" },
+      { "type": "file", "name": "index.js", "content": "import React from 'react';\nimport ReactDOM from 'react-dom';\nimport App from 'src/App.js';\nimport { Provider } from 'react-redux';\n\nReactDOM.render(\n  <App />,\n  document.getElementById('root')\n);\n" },
+      { "type": "file", "name": "styles.css", "content": "" }
+    ]
+  }
+]

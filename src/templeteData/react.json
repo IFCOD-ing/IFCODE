@@ -10,8 +10,8 @@
     "type": "folder",
     "name": "src",
     "childrens": [
-      { "type": "file", "name": "App.js", "content": "" },
-      { "type": "file", "name": "index.js", "content": "" },
+      { "type": "file", "name": "App.js", "content": "import React from 'react';\n\nfunction App() {\n  return (\n    <div>\n      <h1>Hello IF(CODE)</h1>\n      <h2>Start editing to see some magic happen!</h2>\n    </div>\n  );\n}\n\nexport default App;\n" },
+      { "type": "file", "name": "index.js", "content": "import React, { StrictMode } from 'react';\nimport ReactDOM from 'react-dom';\n\nimport App from 'src/App.js';\n\nconst rootElement = document.getElementById('root');\nReactDOM.render(\n  <StrictMode>\n    <App />\n  </StrictMode>,\n  rootElement\n);\n" },
       { "type": "file", "name": "styles.css", "content": "" }
     ]
   }

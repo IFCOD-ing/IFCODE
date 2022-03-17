@@ -13,6 +13,9 @@ const transpileOptionInfo = {
   react: {
     presets: ["react", ["es2015"]],
   },
+  redux: {
+    presets: ["react", ["es2015"]],
+  },
 };
 
 function transplie(fileContent, options) {
