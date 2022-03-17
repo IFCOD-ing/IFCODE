@@ -1,0 +1,40 @@
+[
+  {
+    "type": "folder",
+    "name": "public",
+    "childrens": [
+      { "type": "file", "name": "index.html", "content": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset='utf-8'>\n  <meta name='viewport' content='width=device-width'>\n  <title>IF(CODE)</title>\n </head>\n<body>\n  <div id='root'></div>\n</body>\n</html>" }
+    ]
+  },
+  {
+    "type": "folder",
+    "name": "src",
+    "childrens": [
+      { "type": "file", "name": "App.js", "content": "import React from 'react';\nimport Main from 'src/pages/Main.js';\n\nfunction App() {\n    return <Main />;\n  }\n\nexport default App;\n" },
+      { "type": "file", "name": "index.js", "content": "import React, { StrictMode } from 'react';\nimport ReactDOM from 'react-dom';\n\nimport App from 'src/App.js';\n\nconst rootElement = document.getElementById('root');\nReactDOM.render(\n  <StrictMode>\n    <App />\n  </StrictMode>,\n  rootElement\n);\n\n" },
+      { "type": "file", "name": "styles.css", "content": "" },
+      {
+        "type": "folder",
+        "name": "components",
+        "childrens": [
+          {
+            "type": "folder",
+            "name": "common",
+            "childrens": [
+              { "type": "file", "name": "Header.js", "content": "import React from 'react';\nimport styled from 'styled-components';\n\nconst HeaderWrapper = styled.div`\n  display: flex;\n  justify-content: center;\n  background-color: ${(props) => props.backgroundColor};\n`;\n\nfunction Header({ title, color }) {\n  return (\n    <HeaderWrapper backgroundColor={color}>\n      <h2>{title}</h2>\n    </HeaderWrapper>\n  );\n}\n\nexport default Header;\n" }
+            ]
+          },
+          { "type": "file", "name": "Card.js", "content": "import React from 'react';\nimport styled from 'styled-components';\n\nconst CardWrapper = styled.div`\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 30px;\n  height: 40px;\n  margin-top: 20px;\n  border: 1px solid green;\n  border-radius: 20px;\n  font-size: 20px;\n`;\n\nfunction Card({ content }) {\n  \n  return (\n    <CardWrapper>\n      <p>{content}</p>\n    </CardWrapper>\n  );\n}\n\nexport default Card;\n" },
+          { "type": "file", "name": "InputForm.js", "content": "import React, { useState } from 'react';\nimport styled from 'styled-components';\n\nconst InputFormWrapper = styled.div`\n  display: flex;\n  justify-content: center;\n  margin-top: 20px;\n`;\n\nfunction InputForm({ onClickAddButton }) {\n  const [name, setName] = useState('');\n\n  function handleTextChange(event) {\n    setName(event.target.value);\n  }\n\n  return (\n    <InputFormWrapper>\n      <input type='text' value={name} onChange={handleTextChange} />\n      <button type='button' onClick={() => onClickAddButton(name, setName)}>\n        추가\n      </button>\n    </InputFormWrapper>\n  );\n}\n\nexport default InputForm;\n" }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "pages",
+        "childrens": [
+          { "type": "file", "name": "Main.js", "content": "import React, { useState } from 'react';\nimport styled from 'styled-components';\n\nimport Header from 'src/components/common/Header.js';\nimport InputForm from 'src/components/InputForm.js';\nimport Card from 'src/components/Card.js';\n\nconst MainWrapper = styled.div`\n  display: flex;\n  flex-direction: column;\n\n  .content-box {\n    margin-top: 20px;\n  }\n`;\n\nfunction Main() {\n  const [nameList, setNameList] = useState([]);\n\n  function handleAddButtonClick(name) {\n    nameList.push(name);\n    setNameList([...nameList]);\n  }\n\n  return (\n    <MainWrapper>\n      <Header title='IF(CODE)' color='#9ae2a2' />\n      <InputForm onClickAddButton={handleAddButtonClick} />\n      <div className='content-box'>\n        {nameList.map((value) => (\n          <Card content={value} />\n        ))}\n      </div>\n    </MainWrapper>\n  );\n}\n\nexport default Main;\n"}
+        ]
+      }
+    ]
+  }
+]

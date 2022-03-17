@@ -22,6 +22,7 @@ const PaneContainerBox = styled.div`
     border-radius: 10px;
     background: ${(props) => props.theme.mainColor};
   }
+
   .reflex-element::-webkit-scrollbar-track {
     background: ${(props) => props.theme.backgroundColor};
   }
