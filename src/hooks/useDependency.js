@@ -10,9 +10,9 @@ const dependencyLibraryInfo = {
   redux: {
     react: "https://cdn.skypack.dev/react",
     "react-dom": "https://cdn.skypack.dev/react-dom",
-    "styled-components": "https://cdn.skypack.dev/styled-components",
     "@reduxjs/toolkit": "https://cdn.skypack.dev/@reduxjs/toolkit",
     "react-redux": "https://cdn.skypack.dev/react-redux",
+    "styled-components": "https://cdn.skypack.dev/styled-components",
   },
 };
 
