@@ -8,13 +8,13 @@ import { createGraph } from "./bundler";
 
 const transpileOptionInfo = {
   javascript: {
-    presets: [["es2015"]],
+    presets: [["env"]],
   },
   react: {
-    presets: ["react", ["es2015"]],
+    presets: ["react", ["env"]],
   },
   redux: {
-    presets: ["react", ["es2015"]],
+    presets: ["react", ["env"]],
   },
 };
 
@@ -52,7 +52,7 @@ function setViewRender(fileTree, type, dependencyInfo) {
     const scriptTag = `
       <script>
         ${transplie(scriptCode, {
-          presets: [["es2015", { modules: false }]],
+          presets: [["env", { modules: false }]],
         })}
       </script>
     `;
@@ -221,23 +221,23 @@ function setViewRender(fileTree, type, dependencyInfo) {
   `;
 
   const doc = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      ${styleTagCode}
-    </head>
-    <body>
-      <script>${logScript}</script>
-      <script type="module">
-        ${dependency}
-        const info = ${info}
-        ${code}
-      </script>
-      ${htmlCode}
-      ${scriptTagCode}
-    </body>
-  <html>
-    `;
+    <!DOCTYPE html>
+    <html>
+      <head>
+        ${styleTagCode}
+      </head>
+      <body>
+        <script>${logScript}</script>
+        <script type="module">
+          ${dependency}
+          const info = ${info}
+          ${code}
+        </script>
+        ${htmlCode}
+        ${scriptTagCode}
+      </body>
+    <html>
+  `;
 
   return doc;
 }

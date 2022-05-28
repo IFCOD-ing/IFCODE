@@ -11,7 +11,7 @@ const dependencyLibraryInfo = {
     react: "https://cdn.skypack.dev/react",
     "react-dom": "https://cdn.skypack.dev/react-dom",
     "@reduxjs/toolkit": "https://cdn.skypack.dev/@reduxjs/toolkit",
-    "react-redux": "https://cdn.skypack.dev/react-redux",
+    "react-redux": "https://cdn.skypack.dev/react-redux@7.2.6",
     "styled-components": "https://cdn.skypack.dev/styled-components",
   },
 };
