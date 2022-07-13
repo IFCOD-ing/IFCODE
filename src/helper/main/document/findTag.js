@@ -25,7 +25,7 @@ function findScriptTag(html) {
         }
 
         if (
-          currentSrc.startsWith("http://") &&
+          currentSrc.startsWith("http://") ||
           currentSrc.startsWith("https://")
         ) {
           return;
