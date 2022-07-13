@@ -14,28 +14,28 @@ import { setViewRender } from "../helper/main/setViewRender";
 
 import Button from "../components/common/Button";
 
-import MainNav from "../components/Main/MainNav";
-import Menu from "../components/Main/Menu";
-import FileMenuSub from "../components/Main/FileMenuSub";
-import MainPane from "../components/Main/MainPane";
-import TempleteBox from "../components/Main/TempleteBox";
+import MainNav from "../components/main/MainNav";
+import Menu from "../components/main/Menu";
+import FileMenuSub from "../components/main/FileMenuSub";
+import MainPane from "../components/main/MainPane";
+import TempleteBox from "../components/main/TempleteBox";
 
-import DependencyBox from "../components/Main/DependencyBox";
+import DependencyBox from "../components/main/DependencyBox";
 
-import PaneContainer from "../components/Main/SplitPane/PaneContainer";
-import ContentContainer from "../components/Main/ContentContainer";
+import PaneContainer from "../components/main/SplitPane/PaneContainer";
+import ContentContainer from "../components/main/ContentContainer";
 
-import TabList from "../components/Main/Tabs/TabList";
-import Tab from "../components/Main/Tabs/Tab";
-import TabPanel from "../components/Main/Tabs/TabPanel";
+import TabList from "../components/main/Tabs/TabList";
+import Tab from "../components/main/Tabs/Tab";
+import TabPanel from "../components/main/Tabs/TabPanel";
 
-import CodeEditor from "../components/Main/CodeEditor";
-import WebView from "../components/Main/WebView";
-import Tree from "../components/Main/Tree/Tree";
-import FileForm from "../components/Main/FileForm";
+import CodeEditor from "../components/main/CodeEditor";
+import WebView from "../components/main/WebView";
+import Tree from "../components/main/Tree/Tree";
+import FileForm from "../components/main/FileForm";
 
-import Terminal from "../components/Main/Terminal/Terminal";
-import Log from "../components/Main/Terminal/Log";
+import Terminal from "../components/main/Terminal/Terminal";
+import Log from "../components/main/Terminal/Log";
 import CloseButton from "../components/common/CloseButton";
 
 function Main() {

@@ -2,7 +2,6 @@ function removeScriptTag(htmlFile, pathList) {
   let htmlCode = htmlFile;
 
   pathList.forEach((value) => {
-    htmlCode.indexOf(value);
     const scriptOpenTagIndex = htmlCode.lastIndexOf("<script", value);
     const scriptCloseTagIndex = htmlCode.indexOf("</", scriptOpenTagIndex);
     const scriptTagLastIndex = htmlCode.indexOf(">", scriptCloseTagIndex);
@@ -20,7 +19,6 @@ function removeLinkTag(htmlFile, pathList) {
   let htmlCode = htmlFile;
 
   pathList.forEach((value) => {
-    htmlCode.indexOf(value);
     const linkOpenTagIndex = htmlCode.lastIndexOf("<link", value);
     const linkCloseTagIndex = htmlCode.indexOf(">", linkOpenTagIndex);
 
